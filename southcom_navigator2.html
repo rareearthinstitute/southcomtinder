@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOUTHCOM Tinder — Rare Earth Institute</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   C-sUAS Decision Framework design language
+   Source: rareearthinstitute.github.io/C-sUAS-Decision-Framework
+   Applied to: SOUTHCOM Tinder / Rare Earth Institute
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue:      #0057FF;
+  --blue-s:    rgba(0,87,255,0.08);
+  --blue-d:    rgba(0,87,255,0.15);
+  --ink:       #0A0A0A;
+  --ink70:     rgba(10,10,10,0.70);
+  --ink50:     rgba(10,10,10,0.50);
+  --ink35:     rgba(10,10,10,0.35);
+  --ink15:     rgba(10,10,10,0.15);
+  --ink06:     rgba(10,10,10,0.06);
+  --ink03:     rgba(10,10,10,0.03);
+  --rule:      #E5E5E5;
+  --rule2:     #D0D0D0;
+  --surface:   #F7F7F7;
+  --surface2:  #F0F0F0;
+  --surface3:  #E8E8E8;
+  --red:       #C0180C;
+  --red-s:     rgba(192,24,12,0.07);
+  --amb:       #B05A00;
+  --amb-s:     rgba(176,90,0,0.07);
+  --grn:       #1A6B38;
+  --grn-s:     rgba(26,107,56,0.07);
+  --mono: 'Courier New', Courier, monospace;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: #FFFFFF;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── NAV ─────────────────────────────── */
+.nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(255,255,255,0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav-inner {
+  display: flex; align-items: stretch;
+  max-width: 1280px; margin: 0 auto;
+  padding: 0 40px;
+}
+.nav-brand {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 0 24px 0 0; margin-right: 4px;
+  border-right: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+.nav-brand-primary {
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  color: var(--ink); line-height: 1;
+}
+.nav-brand-secondary {
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--blue); margin-top: 4px; line-height: 1;
+}
+.nav-tabs { display: flex; align-items: stretch; gap: 0; flex: 1; overflow-x: auto; }
+.nav-tabs::-webkit-scrollbar { display: none; }
+.tab-btn {
+  padding: 0 18px; height: 52px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--ink50);
+  background: none; border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer; white-space: nowrap;
+  transition: color 0.15s, border-color 0.15s;
+  margin-bottom: -1px;
+  display: flex; align-items: center; gap: 6px;
+}
+.tab-btn:hover { color: var(--ink70); }
+.tab-btn.active { color: var(--ink); border-bottom-color: var(--blue); }
+.tab-pip {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+  padding: 1px 6px; border-radius: 2px;
+}
+.pip-live { background: var(--blue); color: #fff; }
+.pip-dim  { background: var(--ink06); color: var(--ink35); }
+
+/* ─── PAGE SHELL ──────────────────────── */
+.page { display: none; }
+.page.active { display: block; }
+.page-body {
+  max-width: 1280px; margin: 0 auto;
+  padding: 52px 40px 100px;
+}
+
+/* ─── PAGE OPENER ─────────────────────── */
+.opener { margin-bottom: 44px; }
+.opener-eyebrow {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 12px;
+}
+.opener-title {
+  font-size: 42px; font-weight: 800;
+  letter-spacing: -0.03em; line-height: 1.05;
+  color: var(--ink); margin-bottom: 16px;
+}
+.opener-title em { color: var(--blue); font-style: normal; }
+.opener-desc {
+  font-size: 16px; line-height: 1.7;
+  color: var(--ink50); max-width: 640px;
+}
+.opener-rule { height: 1px; background: var(--rule); margin-top: 36px; }
+
+/* ─── STAT STRIP ──────────────────────── */
+.stats {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  border: 1px solid var(--rule);
+  margin-bottom: 36px;
+}
+.stats + .stats { margin-top: -1px; }
+.stat-cell {
+  padding: 24px 28px;
+  border-right: 1px solid var(--rule);
+  background: var(--surface);
+}
+.stat-cell:last-child { border-right: none; }
+.stat-n {
+  font-size: 36px; font-weight: 800;
+  font-family: var(--mono); letter-spacing: -0.03em;
+  color: var(--ink); line-height: 1;
+}
+.stat-l {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  color: var(--ink50); margin-top: 8px;
+}
+.stat-sub { font-size: 13px; color: var(--ink35); margin-top: 4px; }
+
+/* ─── ALERTS ─────────────────────────── */
+.alert {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 16px 20px; margin-bottom: 16px;
+  border-left: 3px solid;
+}
+.alert-red   { background: var(--red-s); border-color: var(--red); }
+.alert-amber { background: var(--amb-s); border-color: var(--amb); }
+.alert-gold  { background: var(--blue-s); border-color: var(--blue); }
+.alert-ico { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+.alert-red   .alert-ico { color: var(--red); }
+.alert-amber .alert-ico { color: var(--amb); }
+.alert-gold  .alert-ico { color: var(--blue); }
+.alert-lbl {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.alert-red   .alert-lbl { color: var(--red); }
+.alert-amber .alert-lbl { color: var(--amb); }
+.alert-gold  .alert-lbl { color: var(--blue); }
+.alert-body { font-size: 14px; color: var(--ink70); line-height: 1.65; }
+
+/* ─── SPEED BADGES ───────────────────── */
+.spd {
+  display: inline-block;
+  font-size: 11px; font-weight: 700;
+  font-family: var(--mono); letter-spacing: 0.04em;
+  padding: 3px 9px; border-radius: 2px;
+}
+.spd-fast { background: var(--grn-s); color: var(--grn); border: 1px solid rgba(26,107,56,0.20); }
+.spd-med  { background: var(--amb-s); color: var(--amb); border: 1px solid rgba(176,90,0,0.20); }
+.spd-slow { background: var(--red-s); color: var(--red); border: 1px solid rgba(192,24,12,0.18); }
+
+/* ─── TAGS ───────────────────────────── */
+.tag {
+  display: inline-block;
+  font-size: 11px; font-family: var(--mono);
+  padding: 3px 8px; margin: 2px 3px 2px 0;
+  border-radius: 2px;
+}
+.tag-red   { background: var(--red-s); color: var(--red); border: 1px solid rgba(192,24,12,0.18); }
+.tag-gold  { background: var(--blue-s); color: var(--blue); border: 1px solid rgba(0,87,255,0.18); }
+.tag-dim   { background: var(--ink03); color: var(--ink35); border: 1px solid var(--rule); }
+.tag-grn   { background: var(--grn-s); color: var(--grn); border: 1px solid rgba(26,107,56,0.18); }
+
+/* ─── GRIDS ──────────────────────────── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 16px; }
+.divider { height: 1px; background: var(--rule); margin: 28px 0; }
+
+/* ─── SURFACE / CARD ─────────────────── */
+.surface { background: var(--surface); border: 1px solid var(--rule); }
+.surface-pad { padding: 24px 26px; }
+.surface-eyebrow {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 14px;
+}
+
+/* ─── TABLE ──────────────────────────── */
+.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tbl th {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink50);
+  padding: 10px 14px; text-align: left;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--rule);
+}
+.tbl td {
+  padding: 10px 14px; border-bottom: 1px solid var(--rule);
+  color: var(--ink70); vertical-align: top;
+}
+.tbl tr:nth-child(even) td { background: var(--ink03); }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: var(--blue-s); }
+.tbl-mono { font-family: var(--mono); font-size: 13px; color: var(--blue); }
+
+/* ─── REG ROWS ───────────────────────── */
+.reg-row {
+  display: grid; grid-template-columns: 180px 1fr;
+  gap: 16px; padding: 11px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: baseline;
+}
+.reg-row:last-child { border-bottom: none; }
+.reg-cite { font-family: var(--mono); font-size: 13px; color: var(--blue); font-weight: 700; }
+.reg-desc { font-size: 14px; color: var(--ink70); line-height: 1.6; }
+
+/* ─── ACCORDION ──────────────────────── */
+.accord {
+  background: #fff;
+  border: 1px solid var(--rule);
+  margin-bottom: 6px; overflow: hidden;
+}
+.accord-hdr {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 22px; cursor: pointer;
+  transition: background 0.12s;
+}
+.accord-hdr:hover { background: var(--surface); }
+.accord.open .accord-hdr { background: var(--surface); }
+.accord-title { font-size: 15px; font-weight: 600; color: var(--ink); }
+.accord-sub   { font-size: 12px; color: var(--ink50); margin-top: 3px; font-family: var(--mono); }
+.accord-meta  { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.accord-body  {
+  display: none; padding: 24px 26px;
+  border-top: 1px solid var(--rule);
+  background: var(--surface);
+}
+.accord.open .accord-body { display: block; }
+.chevron { font-size: 12px; color: var(--ink35); transition: transform 0.2s; }
+.accord.open .chevron { transform: rotate(180deg); }
+
+/* ─────────────────────────────────────────
+   MATCHMAKER PAGE
+───────────────────────────────────────── */
+.match-hero {
+  padding: 0 0 48px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 40px;
+}
+.match-hero-eyebrow {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 16px;
+}
+.match-hero-headline {
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 800; letter-spacing: -0.03em;
+  line-height: 1.05; color: var(--ink);
+  margin-bottom: 18px;
+}
+.match-hero-headline em { color: var(--blue); font-style: normal; }
+.match-hero-desc {
+  font-size: 16px; line-height: 1.7;
+  color: var(--ink50); max-width: 580px;
+  margin-bottom: 32px;
+}
+
+/* Stakeholder toggle */
+.sh-toggle {
+  display: flex; gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  padding: 3px; width: fit-content;
+  margin-bottom: 12px;
+}
+.sh-btn {
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 7px 20px; border: none;
+  background: none; color: var(--ink50);
+  cursor: pointer; transition: all 0.15s;
+}
+.sh-btn.active { background: var(--blue); color: #fff; }
+.sh-context {
+  font-size: 14px; color: var(--ink35);
+  margin-bottom: 28px; line-height: 1.6;
+}
+
+/* Domain filters */
+.domain-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+.df-btn {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 6px 16px; border-radius: 2px;
+  border: 1px solid var(--rule2);
+  background: transparent; color: var(--ink50);
+  cursor: pointer; transition: all 0.15s;
+}
+.df-btn:hover { border-color: var(--blue); color: var(--blue); }
+.df-btn.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+/* Requirement grid */
+.req-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 12px; margin-bottom: 32px;
+}
+.req-card {
+  position: relative; overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--rule);
+  padding: 22px 24px; cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.req-card::after {
+  content: ''; position: absolute;
+  top: 0; left: 0; width: 3px; height: 100%;
+  background: var(--rule); transition: background 0.15s;
+}
+.req-card:hover { border-color: var(--rule2); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.req-card:hover::after { background: var(--blue); }
+.req-card.sel { border-color: var(--blue); box-shadow: 0 2px 12px rgba(0,87,255,0.12); }
+.req-card.sel::after { background: var(--blue); }
+.req-urgency {
+  position: absolute; top: 16px; right: 16px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 2px;
+}
+.urg-critical { background: var(--red); color: #fff; }
+.urg-high     { background: var(--amb); color: #fff; }
+.urg-routine  { background: var(--ink06); color: var(--ink50); }
+.req-domain {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.req-title {
+  font-size: 15px; font-weight: 700;
+  color: var(--ink); line-height: 1.4;
+  margin-bottom: 8px; padding-right: 80px;
+}
+.req-body {
+  font-size: 13px; color: var(--ink50);
+  line-height: 1.6; margin-bottom: 12px;
+}
+.req-cta {
+  font-size: 12px; color: var(--blue);
+  opacity: 0; transition: opacity 0.15s; margin-top: 8px;
+  font-weight: 600;
+}
+.req-card:hover .req-cta, .req-card.sel .req-cta { opacity: 1; }
+
+/* Match panel */
+.match-panel { display: none; margin-bottom: 36px; }
+.match-panel.vis { display: block; }
+.mp-header {
+  background: var(--surface);
+  border: 1px solid var(--rule); border-bottom: none;
+  padding: 20px 28px;
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.mp-eyebrow {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 7px;
+}
+.mp-title { font-size: 18px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+.mp-sub   { font-size: 13px; color: var(--ink35); margin-top: 5px; }
+.mp-close {
+  background: var(--ink06); border: 1px solid var(--rule);
+  color: var(--ink50); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 6px 14px; cursor: pointer; transition: all 0.15s;
+  flex-shrink: 0; margin-left: 20px; margin-top: 2px;
+}
+.mp-close:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+.mp-results {
+  border: 1px solid var(--rule); border-top: none;
+  background: #fff;
+}
+.mp-constraint-bar {
+  border: 1px solid var(--rule); border-top: none;
+  background: var(--surface2); padding: 16px 28px;
+}
+.mp-cb-label {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  color: var(--ink35); margin-bottom: 8px;
+}
+
+/* Solution items */
+.sol {
+  padding: 28px 28px;
+  border-bottom: 1px solid var(--rule);
+  transition: background 0.12s;
+}
+.sol:last-child { border-bottom: none; }
+.sol:hover { background: var(--surface); }
+.sol-top { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 12px; }
+.sol-badge {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; flex-shrink: 0;
+}
+.sol-b1 { background: var(--blue); color: #fff; }
+.sol-b2 { background: var(--ink06); color: var(--ink50); }
+.sol-b3 { background: var(--ink03); color: var(--ink35); }
+.sol-name  { font-size: 16px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+.sol-type  { font-size: 12px; color: var(--ink35); margin-top: 3px; }
+.sol-body  { font-size: 14px; color: var(--ink70); line-height: 1.7; margin-bottom: 16px; padding-left: 48px; }
+
+/* Pathway box */
+.sol-path-eyebrow {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--blue); margin-bottom: 10px; padding-left: 48px;
+}
+.sol-path-box {
+  margin: 0 0 14px 48px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  overflow: hidden;
+}
+.sol-path-row {
+  display: grid; grid-template-columns: 120px 1fr;
+  gap: 10px; padding: 9px 16px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 14px;
+}
+.sol-path-row:last-child { border-bottom: none; }
+.sol-path-k { color: var(--ink35); font-weight: 600; }
+.sol-path-v { color: var(--ink70); }
+.sol-path-v strong { color: var(--ink); font-weight: 700; }
+
+/* Timeline */
+.sol-timeline {
+  display: flex; margin: 0 0 14px 48px;
+  overflow-x: auto; gap: 0;
+}
+.tl-step { flex: 1; min-width: 70px; text-align: center; position: relative; }
+.tl-step:not(:last-child)::after {
+  content: ''; position: absolute;
+  top: 11px; left: 50%; width: 100%; height: 1px;
+  background: var(--rule);
+}
+.tl-dot {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 6px; font-size: 10px; font-weight: 700;
+  position: relative; z-index: 1; border: 1px solid;
+}
+.td-f { background: var(--grn-s); border-color: rgba(26,107,56,0.30); color: var(--grn); }
+.td-m { background: var(--amb-s); border-color: rgba(176,90,0,0.30);  color: var(--amb); }
+.td-s { background: var(--red-s); border-color: rgba(192,24,12,0.28); color: var(--red); }
+.tl-lbl { font-size: 10px; color: var(--ink35); line-height: 1.35; padding: 0 2px; }
+
+/* Constraint / tradeoff */
+.sol-constraint {
+  margin: 8px 0 8px 48px; padding: 11px 15px;
+  background: var(--blue-s); border-left: 3px solid var(--blue);
+  font-size: 14px; color: var(--ink70); line-height: 1.6;
+}
+.sol-constraint strong { color: var(--blue); }
+.sol-tradeoff {
+  margin: 8px 0 10px 48px; padding: 11px 15px;
+  background: var(--ink03); border-left: 3px solid var(--rule2);
+  font-size: 14px; color: var(--ink70); line-height: 1.6;
+}
+.sol-tradeoff strong { color: var(--ink); }
+.sol-regs { padding-left: 48px; margin-top: 10px; }
+.sol-reg-eyebrow {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  color: var(--red); margin-bottom: 8px;
+}
+
+/* ─────────────────────────────────────────
+   PIPELINES PAGE
+───────────────────────────────────────── */
+.pipe-hdr {
+  display: grid;
+  grid-template-columns: 1fr 90px 160px 130px 1fr;
+  gap: 10px; padding: 10px 20px;
+  background: var(--surface2);
+  border: 1px solid var(--rule); border-bottom: none;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink50);
+}
+.pipe-row {
+  display: grid;
+  grid-template-columns: 1fr 90px 160px 130px 1fr;
+  gap: 10px; align-items: center;
+  padding: 15px 20px;
+  background: #fff;
+  border: 1px solid var(--rule); border-top: none;
+  cursor: pointer; transition: background 0.12s;
+}
+.pipe-row:hover { background: var(--surface); }
+.pipe-row.open  { background: var(--surface); border-bottom-color: transparent; }
+.pipe-name { font-size: 15px; font-weight: 600; color: var(--ink); }
+.pipe-auth { font-size: 11px; font-family: var(--mono); color: var(--ink35); margin-top: 3px; }
+.pipe-detail {
+  display: none; padding: 26px 24px;
+  background: var(--surface);
+  border: 1px solid var(--rule); border-top: none;
+  margin-bottom: 0;
+}
+.pipe-detail.open { display: block; }
+.pipe-tip {
+  margin-top: 16px; padding: 12px 16px;
+  background: var(--blue-s); border-left: 3px solid var(--blue);
+  font-size: 14px; color: var(--ink70); line-height: 1.65;
+}
+.pipe-tip strong { color: var(--blue); }
+
+/* ─────────────────────────────────────────
+   SECTORS PAGE
+───────────────────────────────────────── */
+.sector-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 10px; margin-bottom: 16px;
+}
+.sector-card {
+  background: #fff; border: 1px solid var(--rule);
+  padding: 16px 18px; cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.sector-card:hover { border-color: var(--rule2); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+.sector-card.sel   { border-color: var(--blue); box-shadow: 0 2px 10px rgba(0,87,255,0.10); }
+.sector-icon { font-size: 22px; margin-bottom: 8px; }
+.sector-name { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.sector-risk { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+.risk-c { color: var(--red); }
+.risk-h { color: var(--amb); }
+.risk-m { color: var(--grn); }
+.sector-detail {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  padding: 26px 28px; margin-bottom: 18px;
+}
+.sector-detail.open { display: block; }
+
+/* SMR callout */
+.smr {
+  position: relative; overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--blue);
+  padding: 24px 26px; margin-bottom: 24px;
+}
+.smr::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: var(--blue);
+}
+.smr-eye   { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--blue); margin-bottom: 10px; }
+.smr-title { font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+.smr-body  { font-size: 14px; color: var(--ink70); line-height: 1.7; }
+
+/* ─── RESPONSIVE ─────────────────────── */
+@media (max-width: 900px) {
+  .nav-inner  { padding: 0 20px; }
+  .page-body  { padding: 28px 20px 80px; }
+  .stats      { grid-template-columns: repeat(2,1fr); }
+  .g2,.g3,.g4 { grid-template-columns: 1fr; }
+  .req-grid   { grid-template-columns: 1fr; }
+  .pipe-hdr, .pipe-row { grid-template-columns: 1fr 80px 130px; }
+  .pipe-hdr > *:nth-child(n+4), .pipe-row > *:nth-child(n+4) { display: none; }
+  .sector-grid { grid-template-columns: repeat(2,1fr); }
+  .match-hero-headline { font-size: 30px; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ════ NAV ════════════════════════════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <div class="nav-brand-primary">SOUTHCOM Tinder</div>
+      <div class="nav-brand-secondary">Rare Earth Institute</div>
+    </div>
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="nav('match',this)">
+        Requirement Match <span class="tab-pip pip-live">LIVE</span>
+      </button>
+      <button class="tab-btn" onclick="nav('pipelines',this)">
+        Acquisition Pipelines <span class="tab-pip pip-dim">14</span>
+      </button>
+      <button class="tab-btn" onclick="nav('seccoop',this)">Security Cooperation</button>
+      <button class="tab-btn" onclick="nav('uav',this)">UAV / cUAS</button>
+      <button class="tab-btn" onclick="nav('infra',this)">Critical Infrastructure</button>
+      <button class="tab-btn" onclick="nav('spectrum',this)">Spectrum</button>
+      <button class="tab-btn" onclick="nav('regs',this)">Regulatory Index</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ════ PAGE: MATCH ════════════════════ -->
+<div id="page-match" class="page active">
+<div class="page-body">
+
+  <div class="match-hero">
+    <div class="match-hero-eyebrow">National Security Acquisition Navigator</div>
+    <div class="match-hero-headline">Requirement → Solution →<br><em>Fastest compliant pathway.</em></div>
+    <div class="match-hero-desc">Select a government requirement. The system surfaces matched technologies, systems, and methods — ranked by acquisition speed — with every applicable policy and regulatory constraint applied.</div>
+
+    <div class="sh-toggle">
+      <button class="sh-btn active" onclick="setSH('gov',this)">Government</button>
+      <button class="sh-btn" onclick="setSH('industry',this)">Industry</button>
+      <button class="sh-btn" onclick="setSH('congress',this)">Congress / OSD</button>
+    </div>
+    <div class="sh-context" id="sh-context">Fastest acquisition pathways from a government contracting officer perspective. Speed ratings reflect realistic time-to-field.</div>
+
+    <div class="domain-filters">
+      <button class="df-btn active" onclick="filterDom('all',this)">All domains</button>
+      <button class="df-btn" onclick="filterDom('cuAs',this)">Counter-UAS</button>
+      <button class="df-btn" onclick="filterDom('logistics',this)">Logistics</button>
+      <button class="df-btn" onclick="filterDom('maritime',this)">Maritime</button>
+      <button class="df-btn" onclick="filterDom('cbrne',this)">CBRNE</button>
+      <button class="df-btn" onclick="filterDom('intel',this)">ISR / Intel</button>
+      <button class="df-btn" onclick="filterDom('infra',this)">Infra protection</button>
+    </div>
+  </div>
+
+  <div class="req-grid" id="req-grid"></div>
+
+  <div class="match-panel" id="match-panel">
+    <div class="mp-header">
+      <div>
+        <div class="mp-eyebrow">Matched solutions</div>
+        <div class="mp-title" id="mp-title"></div>
+        <div class="mp-sub"   id="mp-sub"></div>
+      </div>
+      <button class="mp-close" onclick="closeMatch()">✕ Close</button>
+    </div>
+    <div class="mp-results" id="mp-results"></div>
+    <div class="mp-constraint-bar" id="mp-cbar"></div>
+  </div>
+
+</div></div>
+
+<!-- ════ PAGE: PIPELINES ════════════════ -->
+<div id="page-pipelines" class="page">
+<div class="page-body">
+
+  <div class="opener">
+    <div class="opener-eyebrow">Acquisition</div>
+    <div class="opener-title">Government acquisition pipelines</div>
+    <div class="opener-desc">All available pathways for SOUTHCOM requirements. Speed = realistic time from validated requirement to fielded capability. Click any row to expand the full regulatory and execution profile.</div>
+    <div class="opener-rule"></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-cell"><div class="stat-n">14</div><div class="stat-l">Total pathways</div><div class="stat-sub">All vehicles mapped</div></div>
+    <div class="stat-cell"><div class="stat-n">3</div><div class="stat-l">Sub-60 day options</div><div class="stat-sub">OTA · SBIR III · SAP</div></div>
+    <div class="stat-cell"><div class="stat-n">18–24mo</div><div class="stat-l">Spectrum cert lag</div><div class="stat-sub">Largest speed constraint</div></div>
+    <div class="stat-cell"><div class="stat-n">7–15yr</div><div class="stat-l">Program of record</div><div class="stat-sub">Never for urgent needs</div></div>
+  </div>
+
+  <div class="alert alert-amber" style="margin-bottom:24px">
+    <span class="alert-ico">⚡</span>
+    <div>
+      <div class="alert-lbl">Speed is a strategic variable</div>
+      <div class="alert-body">Adversaries field new capabilities in days to weeks. U.S. rapid acquisition (OTA) takes 1–3 years. The gap is structural. Every pathway below is annotated with the specific technique to operate at maximum legal velocity.</div>
+    </div>
+  </div>
+
+  <div class="pipe-hdr">
+    <div>Pathway / authority</div><div>Speed</div>
+    <div>Timeline</div><div>Ceiling</div><div>Competition</div>
+  </div>
+  <div id="pipelines-list"></div>
+
+</div></div>
+
+<!-- ════ PAGE: SECCOOP ══════════════════ -->
+<div id="page-seccoop" class="page">
+<div class="page-body">
+
+  <div class="opener">
+    <div class="opener-eyebrow">Security Cooperation</div>
+    <div class="opener-title">Security cooperation authorities</div>
+    <div class="opener-desc">Title 10 and Title 22 authorities governing partner nation capacity building, training, and equipment transfer in the SOUTHCOM AOR. Leahy Law applies to every entry on this page.</div>
+    <div class="opener-rule"></div>
+  </div>
+
+  <div class="alert alert-red" style="margin-bottom:24px">
+    <span class="alert-ico">⚠</span>
+    <div>
+      <div class="alert-lbl">Leahy Law — no exceptions</div>
+      <div class="alert-body">22 USC 2378d and 10 USC 362 prohibit security assistance to any foreign security force unit that has committed gross violations of human rights without accountability. Unit-level vetting through State Department INVEST system required before any interaction. Run vetting in parallel with program planning — never in series. Serial execution adds 30–90 days and is the most common execution failure in SOUTHCOM security cooperation.</div>
+    </div>
+  </div>
+
+  <div id="seccoop-list"></div>
+</div></div>
+
+<!-- ════ PAGE: UAV ══════════════════════ -->
+<div id="page-uav" class="page">
+<div class="page-body">
+
+  <div class="opener">
+    <div class="opener-eyebrow">Threat & Policy</div>
+    <div class="opener-title">UAV / cUAS — threat, policy, acquisition</div>
+    <div class="opener-desc">Communication architecture, offense-defense asymmetry, Safer Skies Act (FY26 NDAA), NDAA §848 hardware prohibition, and the partner nation gap.</div>
+    <div class="opener-rule"></div>
+  </div>
+
+  <div class="alert alert-red" style="margin-bottom:28px">
+    <span class="alert-ico">⚠</span>
+    <div>
+      <div class="alert-lbl">Offense-defense asymmetry — structural, not technical</div>
+      <div class="alert-body">A non-state actor fields a weaponized commercial drone in hours. A defender must clear an authorized equipment list process measured in months to years. The gap compounds with every iteration cycle the adversary completes while the defender is still in testing. This is not a resource problem. It is an architectural problem.</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div>
+      <div class="surface" style="margin-bottom:12px">
+        <div class="surface-pad">
+          <div class="surface-eyebrow">UAV as communication node</div>
+          <table class="tbl">
+            <thead><tr><th>Link</th><th>Band / protocol</th><th>Vulnerability</th><th>Exploit</th></tr></thead>
+            <tbody>
+              <tr><td class="tbl-mono">GCS datalink</td><td>900MHz / 2.4 / 5.8GHz</td><td>Jamming, spoofing, hijack</td><td>C2 takeover</td></tr>
+              <tr><td class="tbl-mono">SATCOM uplink</td><td>Ku / Ka / L-band</td><td>Signal intercept</td><td>Pattern of life</td></tr>
+              <tr><td class="tbl-mono">Mesh / relay</td><td>Proprietary RF</td><td>Node compromise</td><td>Network infiltration</td></tr>
+              <tr><td class="tbl-mono">Tactical radio</td><td>Link 16 / SINCGARS</td><td>Emission intercept</td><td>SIGINT collection</td></tr>
+              <tr><td class="tbl-mono">Commercial LTE/5G</td><td>Licensed cellular</td><td>No default encryption</td><td>Location, data exfil</td></tr>
+              <tr><td class="tbl-mono">GPS navigation</td><td>L1/L2 1575/1228 MHz</td><td>Spoofing, jamming</td><td>Navigation denial</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="surface">
+        <div class="surface-pad">
+          <div class="surface-eyebrow">Adversary capability — SOUTHCOM AOR</div>
+          <table class="tbl">
+            <thead><tr><th>Actor</th><th>Platform</th><th>Use</th><th>Acq speed</th></tr></thead>
+            <tbody>
+              <tr><td>Cartel / TCO</td><td>Commercial DJI, FPV</td><td>Surveillance, payload</td><td class="tbl-mono" style="color:var(--grn)">Hours–days</td></tr>
+              <tr><td>FARC remnants</td><td>Commercial + modified</td><td>ISR, IED delivery</td><td class="tbl-mono" style="color:var(--grn)">Days–weeks</td></tr>
+              <tr><td>Venezuela (state)</td><td>Mohajer-6, Shahed</td><td>Sovereignty assertion, ISR</td><td class="tbl-mono" style="color:var(--amb)">Weeks–months</td></tr>
+              <tr><td>Iranian proxies</td><td>Shahed-136 variants</td><td>Infrastructure targeting</td><td class="tbl-mono" style="color:var(--amb)">Months</td></tr>
+              <tr><td>PRC (indirect)</td><td>Wing Loong, CH-series</td><td>Technology transfer</td><td class="tbl-mono" style="color:var(--amb)">Months</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="surface" style="margin-bottom:12px">
+        <div class="surface-pad">
+          <div class="surface-eyebrow">Governing regulations</div>
+          <div class="reg-row"><span class="reg-cite">FAA Part 107</span><span class="reg-desc">Commercial UAS certification and operating rules. COA required for government operations. LAANC for airspace authorization.</span></div>
+          <div class="reg-row"><span class="reg-cite">DoDD 3000.09</span><span class="reg-desc">Autonomous weapons systems. Human supervisory requirements for any UAV with lethal or decision-making capability. Updated 2023.</span></div>
+          <div class="reg-row"><span class="reg-cite">NDAA §848 (FY20)</span><span class="reg-desc">Prohibits federal procurement of DJI, Autel, Parrot, Yuneec, and affiliated Chinese-manufactured UAS. Applies to all federally funded acquisitions. Does not cover partner nation self-procurement.</span></div>
+          <div class="reg-row"><span class="reg-cite">Safer Skies Act</span><span class="reg-desc">Signed Dec 18, 2025 (FY26 NDAA). Authorizes SLTT law enforcement to detect, track, disable, or destroy drones threatening critical infrastructure, major events, or correctional facilities. DHS/DOJ AEL + federal training required. Regs due ~June 2026. $250M FEMA grant.</span></div>
+          <div class="reg-row"><span class="reg-cite">SkyFoundry (FY26)</span><span class="reg-desc">Government-backed domestic drone manufacturing program. Congressional response to Chinese supply chain dominance.</span></div>
+          <div class="reg-row"><span class="reg-cite">DoDI 4650.01</span><span class="reg-desc">Spectrum management for all DoD UAS operations. Frequency authorization required. Coordination with NTIA for shared bands.</span></div>
+        </div>
+      </div>
+      <div class="alert alert-amber">
+        <span class="alert-ico">⚑</span>
+        <div>
+          <div class="alert-lbl">Chinese UAV / NDAA §848 — partner nation gap</div>
+          <div class="alert-body">SOUTHCOM partner nation security forces operate significant DJI inventories acquired outside U.S. funding streams. NDAA §848 does not reach these systems. Any joint operation or shared C2 architecture must account for the reality that friendly forces are flying hardware manufactured by the adversary — a real-time intelligence collection risk and long-term supply chain dependency that no current policy fully resolves.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ════ PAGE: INFRA ════════════════════ -->
+<div id="page-infra" class="page">
+<div class="page-body">
+
+  <div class="opener">
+    <div class="opener-eyebrow">Critical Infrastructure</div>
+    <div class="opener-title">Critical infrastructure protection</div>
+    <div class="opener-desc">CISA 16-sector framework applied to the SOUTHCOM AOR. UAV threat vectors, SMR deployment implications, and the private sector ownership gap.</div>
+    <div class="opener-rule"></div>
+  </div>
+
+  <div class="smr">
+    <div class="smr-eye">⚛ Return item — Small Modular Reactors</div>
+    <div class="smr-title">SMRs will be deployed in the SOUTHCOM AOR. The protection architecture does not yet exist.</div>
+    <div class="smr-body">SMRs will be fielded at forward operating locations, remote partner nation sites, and island chain installations in the near term. They inherit the full NRC regulatory framework — 10 CFR 73 physical security, 10 CFR 73.54 cyber security — in a smaller footprint deployed in more exposed, less defended configurations. UAV overflight, communication exploitation, and cyber-physical attack via proximate drone operations are the primary threat vectors. An SMR at a SOUTHCOM forward location is simultaneously a critical infrastructure asset and a potential high-consequence target. Acquisition planning must integrate DoE, NRC, and DoD authorities simultaneously — a coordination challenge with no existing playbook.</div>
+  </div>
+
+  <div style="font-size:9px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink50);margin-bottom:12px">CISA 16 designated sectors — click for SOUTHCOM threat profile</div>
+  <div class="sector-grid" id="sector-grid"></div>
+  <div class="sector-detail" id="sector-detail"></div>
+
+  <div class="alert alert-amber" style="margin-top:8px">
+    <span class="alert-ico">⚑</span>
+    <div>
+      <div class="alert-lbl">Private sector ownership gap</div>
+      <div class="alert-body">The majority of U.S. critical infrastructure is privately owned. When a UAV threat materializes against a power grid or port, decision authority sits with a utility company or port operator — not a DoD commander. Acquisition pathways available to private sector critical infrastructure owners are limited to DHS/CISA programs, Safer Skies grants (SLTT law enforcement only), and private procurement. DoD cannot assume operational control without specific authority. This gap is a primary unresolved national security vulnerability.</div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-top:18px">
+    <div class="surface">
+      <div class="surface-pad">
+        <div class="surface-eyebrow">Governing framework</div>
+        <div class="reg-row"><span class="reg-cite">PPD-21</span><span class="reg-desc">Presidential Policy Directive 21 — Critical Infrastructure Security and Resilience. CISA as lead federal coordinator. 16 sectors with sector risk management agencies defined.</span></div>
+        <div class="reg-row"><span class="reg-cite">NIST CSF 2.0</span><span class="reg-desc">Cybersecurity Framework (2024). Identify-Protect-Detect-Respond-Recover. Applied to ICS/OT environments in energy, water, and nuclear sectors.</span></div>
+        <div class="reg-row"><span class="reg-cite">NERC CIP</span><span class="reg-desc">Mandatory critical infrastructure protection standards for bulk electric system. Enforceable with financial penalties. Physical and cyber perimeter protection.</span></div>
+        <div class="reg-row"><span class="reg-cite">10 CFR 73</span><span class="reg-desc">NRC physical security for nuclear facilities. Background investigations, armed guards, access control. SMR deployments require NRC site security plan approval.</span></div>
+        <div class="reg-row"><span class="reg-cite">10 CFR 73.54</span><span class="reg-desc">NRC cyber security. Protects digital systems associated with safety, security, and emergency preparedness. Applies to SMRs including forward-deployed configurations.</span></div>
+        <div class="reg-row"><span class="reg-cite">DHS SAFETY Act</span><span class="reg-desc">Liability protection for DHS-designated anti-terrorism technologies. Relevant for cUAS vendors in U.S. CI protection. Does not apply outside U.S. territory.</span></div>
+      </div>
+    </div>
+    <div class="surface">
+      <div class="surface-pad">
+        <div class="surface-eyebrow">UAV threat vectors against protected facilities</div>
+        <table class="tbl">
+          <thead><tr><th>Vector</th><th>Mechanism</th><th>Consequence</th></tr></thead>
+          <tbody>
+            <tr><td>Physical overflight</td><td>Observation, mapping</td><td>Facility layout intel</td></tr>
+            <tr><td>RF proximity exploit</td><td>Onboard SDR probing ICS RF</td><td>Network mapping</td></tr>
+            <tr><td>Payload delivery</td><td>Explosive, EMP, cyber implant</td><td>Physical damage, persistence</td></tr>
+            <tr><td>Defensive probing</td><td>Deliberate overflight</td><td>cUAS architecture mapping</td></tr>
+            <tr><td>Communication relay</td><td>Persistent C2 node</td><td>Extended exfiltration</td></tr>
+            <tr><td>Swarm saturation</td><td>Multiple simultaneous vectors</td><td>Overwhelms single-thread cUAS</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<!-- ════ PAGE: SPECTRUM ═════════════════ -->
+<div id="page-spectrum" class="page">
+<div class="page-body">
+
+  <div class="opener">
+    <div class="opener-eyebrow">Spectrum Management</div>
+    <div class="opener-title">Spectrum — the silent constraint</div>
+    <div class="opener-desc">The electromagnetic spectrum is finite, contested, and governed by overlapping authorities moving at incompatible speeds. In the SOUTHCOM AOR, partner nation spectrum governance ranges from weak to nonexistent. The adversary has no coordination requirements.</div>
+    <div class="opener-rule"></div>
+  </div>
+
+  <div class="alert alert-amber" style="margin-bottom:28px">
+    <span class="alert-ico">⚑</span>
+    <div>
+      <div class="alert-lbl">18–24 month certification lag — the procurement tail</div>
+      <div class="alert-body">Testing and certification for spectrum-touching systems (UAV, cUAS, tactical comms) takes 18–24 months. The technology that clears the process is already a generation behind the threat. This is the single largest speed-killer in cUAS acquisition and directly undermines the Safer Skies Act's operational intent.</div>
+    </div>
+  </div>
+
+  <div class="g3" style="margin-bottom:28px">
+    <div class="surface"><div class="surface-pad">
+      <div class="surface-eyebrow">Technical layer</div>
+      <div style="font-size:11px;color:var(--ink50);line-height:1.7">UAVs, cUAS, 5G, tactical radios, GPS, and commercial wireless compete for overlapping bands with no real-time arbitration in contested environments. A cUAS jammer may simultaneously disable friendly comms, GPS, or partner nation civilian infrastructure on adjacent frequencies.</div>
+    </div></div>
+    <div class="surface"><div class="surface-pad">
+      <div class="surface-eyebrow">Regulatory layer</div>
+      <div style="font-size:11px;color:var(--ink50);line-height:1.7">FCC, NTIA, and DoD each govern portions of spectrum at different timelines. A new DoD system requires NTIA frequency authorization. Commercial systems require FCC. Partner nation operations require bilateral coordination agreements — which often do not exist in the SOUTHCOM AOR.</div>
+    </div></div>
+    <div class="surface"><div class="surface-pad">
+      <div class="surface-eyebrow">Operational layer</div>
+      <div style="font-size:11px;color:var(--ink50);line-height:1.7">The adversary has no coordination requirements. Commercial drones operate on unlicensed Part 15 bands — promiscuous and impossible to pre-authorize against. State-actor UAVs use frequency-agile systems designed to defeat static jamming. The defender protects a fixed plan. The attacker shifts at will.</div>
+    </div></div>
+  </div>
+
+  <div class="g2">
+    <div class="surface"><div class="surface-pad">
+      <div class="surface-eyebrow">Governing framework</div>
+      <div class="reg-row"><span class="reg-cite">NTIA Manual</span><span class="reg-desc">Manual of Regulations and Procedures for Federal Radio Frequency Management. Federal spectrum allocation and use. Authorization process: 6–18 months typical.</span></div>
+      <div class="reg-row"><span class="reg-cite">FCC Part 15</span><span class="reg-desc">Unlicensed operations. Most commercial drone C2 (900MHz, 2.4GHz, 5.8GHz ISM) operates here — no license, no coordination, no enforcement against interference.</span></div>
+      <div class="reg-row"><span class="reg-cite">DoDI 4650.01</span><span class="reg-desc">DoD spectrum management policy. Frequency authorization for all DoD transmitting systems. Theater spectrum management through SOUTHCOM J6.</span></div>
+      <div class="reg-row"><span class="reg-cite">47 USC 333</span><span class="reg-desc">Prohibits willful interference with radio communications. cUAS jamming by non-authorized entities may violate this statute. Federal agencies have waivers; SLTT under Safer Skies with authorized equipment only.</span></div>
+      <div class="reg-row"><span class="reg-cite">Safer Skies AEL</span><span class="reg-desc">Authorized equipment list under development (DHS/DOJ regs due ~June 2026). Adds a certification layer on top of NTIA/FCC — compounding the procurement tail.</span></div>
+    </div></div>
+    <div class="surface"><div class="surface-pad">
+      <div class="surface-eyebrow">Key frequency bands — UAV / cUAS context</div>
+      <table class="tbl">
+        <thead><tr><th>Band</th><th>Primary use</th><th>Regulatory status</th><th>Threat relevance</th></tr></thead>
+        <tbody>
+          <tr><td class="tbl-mono">433 MHz</td><td>Legacy RC, long-range</td><td>Licensed / ISM</td><td>Cartel fixed-wing</td></tr>
+          <tr><td class="tbl-mono">900 MHz</td><td>Long-range UAV C2</td><td>ISM (unlicensed)</td><td>High — most common</td></tr>
+          <tr><td class="tbl-mono">1.2 GHz</td><td>FPV video downlink</td><td>Licensed</td><td>FPV attack drones</td></tr>
+          <tr><td class="tbl-mono">2.4 GHz</td><td>Commercial drone C2</td><td>ISM (unlicensed)</td><td>DJI and commercial</td></tr>
+          <tr><td class="tbl-mono">5.8 GHz</td><td>Commercial video</td><td>ISM (unlicensed)</td><td>Short-range surveillance</td></tr>
+          <tr><td class="tbl-mono">GPS L1/L2</td><td>Navigation</td><td>Federal (DoD/USCG)</td><td>Spoofing / jamming</td></tr>
+        </tbody>
+      </table>
+    </div></div>
+  </div>
+</div></div>
+
+<!-- ════ PAGE: REGS ══════════════════════ -->
+<div id="page-regs" class="page">
+<div class="page-body">
+  <div class="opener">
+    <div class="opener-eyebrow">Regulatory Index</div>
+    <div class="opener-title">Policy and regulatory index</div>
+    <div class="opener-desc">Complete reference organized by domain. Every regulation, directive, and statute relevant to SOUTHCOM acquisition, security cooperation, UAV operations, critical infrastructure, spectrum, and export control.</div>
+    <div class="opener-rule"></div>
+  </div>
+  <div id="regs-list"></div>
+</div></div>
+
+<script>
+const REQUIREMENTS = [
+  {
+    id:'r1', domain:'cuAs', urgency:'critical',
+    title:'Counter-UAS detection — forward FOB perimeter',
+    body:'Multiple forward operating positions require organic RF-enabled cUAS detection capability. Threat: commercial DJI-class platforms and modified FPV drones. Budget identified. Need capability within 60 days.',
+    constraints:['NDAA §848 (no Chinese hardware)','Safer Skies AEL pending (DoD route available)','CMMC Level 2 required','ITAR/EAR review if partner nation involvement'],
+    solutions:['s1','s2','s3']
+  },
+  {
+    id:'r2', domain:'cuAs', urgency:'high',
+    title:'Kinetic cUAS defeat capability — partner nation base',
+    body:'Partner nation security force base requires kinetic or directed-energy cUAS defeat system. Joint operation with U.S. advisory presence. ITAR license and Leahy vetting required before any transfer.',
+    constraints:['ITAR Category XV license required','Leahy Law vetting — unit-level','Sec 333 authority if U.S.-funded','DoDD 3000.09 autonomous weapons review'],
+    solutions:['s4','s5','s6']
+  },
+  {
+    id:'r3', domain:'logistics', urgency:'high',
+    title:'Expeditionary logistics advisory cell — island chain resupply',
+    body:'JTF-B requires mobile logistics advisory team with COCO commercial maritime access to Pacific island chain nodes. Budget on LOGCAP V. Need team stood up in 45 days.',
+    constraints:['FAR Part 17.5 (interagency)','DFARS 225.7 (foreign acquisition)','COCO contract structure — no FAR prohibition','Status of Forces implications at partner locations'],
+    solutions:['s7','s8','s9']
+  },
+  {
+    id:'r4', domain:'maritime', urgency:'high',
+    title:'Maritime domain awareness — regional partner integration',
+    body:'J2 requires contractor support integrating regional partner nation AIS feeds, radar data, and patrol reporting into a unified MDA picture. Classification: SECRET. 120-day stand-up.',
+    constraints:['TS/SCI facility clearance for some feeds','ITAR — AIS integration technology','Partner nation data sharing agreements required','SOFA implications for contractor personnel'],
+    solutions:['s10','s11','s12']
+  },
+  {
+    id:'r5', domain:'cbrne', urgency:'critical',
+    title:'CBRN detection and partner force training package',
+    body:'Honduran and Colombian security forces require CBRN awareness and L2 detection training. Instructor cadre with JCAD and MINICAD training variants needed within 90 days.',
+    constraints:['Leahy Law vetting — all partner units','Sec 333 authority required','ITAR Cat XIV (CBRN detection equipment)','End-use monitoring (Golden Sentry)'],
+    solutions:['s13','s14','s15']
+  },
+  {
+    id:'r6', domain:'intel', urgency:'routine',
+    title:'Multi-INT data fusion analytical support — JTF',
+    body:'Intelligence cell requires cleared contractor analytical support for pattern of life, GEOINT/SIGINT fusion, and threat network analysis. TS/SCI. 120-day stand-up with potential for long-term follow-on.',
+    constraints:['TS/SCI clearance — all personnel','SCIF access required','DFARS 252.204-7012 (cyber incident reporting)','CMMC Level 3 likely required'],
+    solutions:['s16','s17','s18']
+  },
+  {
+    id:'r7', domain:'infra', urgency:'critical',
+    title:'Critical infrastructure UAV protection — energy facility',
+    body:'Energy infrastructure node (partner nation, SOUTHCOM AOR) requires integrated UAV detection, tracking, and defeat architecture. UAV threat assessed at Group 1–3. Private sector owner. U.S. advisory role.',
+    constraints:['Safer Skies Act — SLTT authority only in U.S.','Partner nation law governs outside U.S.','NDAA §848 — no Chinese cUAS hardware','PPD-21 framework if U.S. facility','Spectrum coordination with host nation required'],
+    solutions:['s19','s20','s21']
+  },
+  {
+    id:'r8', domain:'cuAs', urgency:'high',
+    title:'RF spectrum monitoring — partner nation airspace',
+    body:'SOUTHCOM J6 requires persistent RF spectrum monitoring capability to characterize UAV activity in partner nation AOR. Must operate across 400MHz–6GHz. Contractor-operated. 90-day fielding.',
+    constraints:['Host nation spectrum authorization required','DoDI 4650.01 frequency authorization','ITAR if classified collection capability','SOFA/basing agreement required for persistent presence'],
+    solutions:['s22','s23','s24']
+  }
+];
+
+const SOLUTIONS = {
+  s1:{
+    rank:1, title:'DroneShield DroneSentry-X',type:'RF detection + radar + acoustic sensor fusion',
+    body:'Integrated multi-sensor cUAS detection platform. RF detection across 400MHz–6GHz, 3D radar, acoustic detection. Real-time threat classification. Deployed with U.S. Army, USMC, and allied SOF. Non-Chinese hardware — NDAA §848 compliant. On U.S. Army authorized equipment list.',
+    speed:'FAST',
+    pathway:{
+      vehicle:'EAGLE II BOA / OASIS+',authority:'FAR 16.504 task order',timeline:'30–45 days',ceiling:'Program ceiling',competition:'Task order competition (limited)',
+      steps:['Requirement defined (existing — 1 day)','Task order solicitation to BOA holders (3–5 days)','Proposals received (7–10 days)','Award (5–7 days)','Delivery and integration (14–21 days)'],
+      totalTime:'30–45 days',speedRating:'FAST'
+    },
+    regulations:['NDAA §848 compliant — non-Chinese','FAR 16.504','DoDI 4650.01 — spectrum authorization required','CMMC Level 2 for contract'],
+    constraints:'DHS/DOJ Authorized Equipment List certification may be required if supporting SLTT operations. DoD operations not AEL-dependent.',
+    tradeoff:'Best speed. Proven system. Higher unit cost than some alternatives.'
+  },
+  s2:{
+    rank:2,title:'Dedrone DedroneTracker (Axon platform)',type:'RF + AI-enabled cloud C2',
+    body:'Cloud-based detection and C2 platform. RF sensors with machine learning classification. Widely deployed by U.S. law enforcement and military. Axon acquisition (2024) adds integration pathways. GSA Schedule listed.',
+    speed:'FAST',
+    pathway:{vehicle:'GSA MAS Schedule 70 / EAGLE II',authority:'FAR 8.405 / FAR 16.504',timeline:'21–35 days',ceiling:'Schedule ceiling',competition:'Order competition',steps:['GSA Schedule order placed (1 day)','Delivery (7–14 days)','Integration and training (7–14 days)'],totalTime:'21–35 days',speedRating:'FAST'},
+    regulations:['GSA Schedule compliance','NDAA §848 compliant','FCC Part 15 — receiver only (no jamming authority)','CMMC Level 2'],
+    constraints:'Detection-only. Defeat/jamming capability requires separate authority and different vehicle. If DoD operations require jamming, 47 USC 333 waivers apply.',
+    tradeoff:'Fastest path. Detection only. Widely known to adversaries.'
+  },
+  s3:{
+    rank:3,title:'OTA Prototype — domestic cUAS integrator',type:'Custom multi-layer architecture via OTA',
+    body:'Custom integrated cUAS architecture through OTA prototype agreement with a non-traditional contractor consortium. Enables tailored sensor fusion, defeat integration, and classified capability elements not available through commercial catalog.',
+    speed:'MED',
+    pathway:{vehicle:'OTA — 10 USC 4022',authority:'10 USC 4022 — no FAR',timeline:'45–90 days',ceiling:'Negotiated',competition:'None required',steps:['Consortium identified (existing relationship — 1 week)','Prototype agreement drafted (1–2 weeks)','Legal review and signature (1–2 weeks)','Development and delivery (4–8 weeks)'],totalTime:'45–90 days',speedRating:'MED'},
+    regulations:['10 USC 4022','Non-traditional contractor required in consortium','No DFARS unless follow-on production','DoDI 4650.01 spectrum auth still required'],
+    constraints:'Prototype only — sustained operations require follow-on production agreement. Audit risk lower than FAR but still present.',
+    tradeoff:'Most capable solution. Moderate speed. Allows classified capability integration.'
+  },
+  s4:{
+    rank:1,title:'Liteye AUDS (Anti-UAV Defence System)',type:'Directional RF inhibitor + EO/IR + radar',
+    body:'Integrated detect-track-defeat system. Directional RF inhibition (no spectrum destruction), EO/IR tracking, 3D radar. Exportable configuration available. Used by U.S. Army and multiple allied forces. ITAR Category XI — export license required.',
+    speed:'MED',
+    pathway:{vehicle:'FMF case / OASIS+ with Sec 333',authority:'22 USC 2763 + 10 USC 333',timeline:'90–180 days',ceiling:'Program / FMF case',competition:'Justified sole source or limited',steps:['Leahy vetting — partner units (30–60 days parallel)','ITAR export license application (60–90 days)','FMF case opening or Sec 333 notification (30 days)','Procurement and delivery (45–60 days)'],totalTime:'90–180 days',speedRating:'MED'},
+    regulations:['ITAR Category XI export license required — State Dept','Leahy Law — unit vetting before any transfer','10 USC 333 authority + congressional notification','Golden Sentry end-use monitoring','DoDD 3000.09 — defeat system review'],
+    constraints:'ITAR license is the critical path item. Cannot be expedited below 60 days in most cases. Leahy vetting must run in parallel, not series.',
+    tradeoff:'Capable exportable system. ITAR timeline is the constraint. Run vetting and licensing in parallel.'
+  },
+  s5:{
+    rank:2,title:'IXI Technology Dronekiller',type:'Portable RF defeat — handheld/tripod',
+    body:'Handheld and vehicle-mounted directional RF disruption. Effective against Group 1 platforms. EAR-controlled (less restrictive than ITAR). Faster export licensing path for partner nation transfer.',
+    speed:'MED',
+    pathway:{vehicle:'FMF / Direct Commercial Sale',authority:'EAR + 10 USC 333',timeline:'60–120 days',ceiling:'Negotiated',competition:'Limited',steps:['Leahy vetting (30–60 days)','EAR license (30–45 days)','Procurement (30–45 days)'],totalTime:'60–120 days',speedRating:'MED'},
+    regulations:['EAR ECCN 5A001 — Commerce license','Leahy Law vetting','10 USC 333 or direct commercial sale','AECA requirements if FMF-funded'],
+    constraints:'EAR license faster than ITAR but still requires 30–45 day minimum. Effectiveness limited to Group 1 platforms.',
+    tradeoff:'Faster export path than ITAR items. Limited capability ceiling.'
+  },
+  s6:{
+    rank:3,title:'Partner nation organic capability development',type:'Training + TTPs + indigenous procurement',
+    body:'Develop partner nation indigenous cUAS capability through training, TTP development, and support for domestic procurement. Avoids U.S. export license requirements for partner nation self-procurement of non-U.S. hardware.',
+    speed:'SLOW',
+    pathway:{vehicle:'IMET + Sec 333 + SOF advisory',authority:'22 USC 2347 + 10 USC 333',timeline:'6–18 months',ceiling:'Program budget',competition:'N/A',steps:['IMET nominations (30 days)','Training program design (60 days)','Cadre deployment (Sec 333) (30–60 days)','Partner nation procurement support (ongoing)'],totalTime:'6–18 months',speedRating:'SLOW'},
+    regulations:['Leahy Law — all personnel','IMET regulations (22 USC 2347)','Sec 333 congressional notification','No U.S. ITAR/EAR if partner procures non-U.S. systems independently'],
+    constraints:'Slowest path but builds durable partner capacity. Avoids U.S. export control entirely if partner sources non-U.S. systems.',
+    tradeoff:'Longest timeline. Highest strategic value. Appropriate where immediate capability gap is tolerable.'
+  },
+  s7:{
+    rank:1,title:'RMGS-type logistics advisory cell with COCO shipping partner',type:'Contractor advisory team + commercial maritime access',
+    body:'Mobile 6–8 person logistics advisory cell with embedded access to commercial shipping partner holding established berth agreements at Pacific island chain nodes. COCO contract structure. LOGCAP V or OASIS+ vehicle. No foreign acquisition restrictions — commercial maritime.',
+    speed:'FAST',
+    pathway:{vehicle:'LOGCAP V / OASIS+',authority:'FAR 16.504 task order',timeline:'21–45 days',ceiling:'$82B LOGCAP V',competition:'Task order (limited)',steps:['Task order solicitation (3–5 days)','Proposals (7 days)','Award (5 days)','Contractor mobilization (7–14 days)','Logistics cell operational (7–14 days)'],totalTime:'21–45 days',speedRating:'FAST'},
+    regulations:['FAR 16.504','DFARS 225.7 (foreign acquisition considerations)','COCO structure — no Government property implications','SOFA/basing at partner nation locations','Host nation labor law at ports of call'],
+    constraints:'COCO commercial shipping must be formalized (LOI/MOU with shipping company) before task order award to ensure capability is available.',
+    tradeoff:'Fastest path to operational logistics capability. Dependent on pre-existing commercial relationships.'
+  },
+  s8:{
+    rank:2,title:'WEXMAC 2.0 logistics support task order',type:'SOUTHCOM-specific IDIQ — logistics and advisory',
+    body:'Western Hemisphere-specific vehicle. Pre-competed, SOUTHCOM-managed. Streamlined task order process for theater logistics requirements. Existing contractor relationships with SOUTHCOM-specific clearances and area familiarization.',
+    speed:'FAST',
+    pathway:{vehicle:'WEXMAC 2.0',authority:'SOUTHCOM IDIQ — FAR 16.504',timeline:'14–30 days',ceiling:'Classified',competition:'Task order (WEXMAC holders)',steps:['Task order package to J4/contracting (2–3 days)','Solicitation to WEXMAC holders (5–7 days)','Award (5–7 days)','Mobilization (7–14 days)'],totalTime:'14–30 days',speedRating:'FAST'},
+    regulations:['SOUTHCOM-specific acquisition regulations','FAR 16.504','DFARS theater-specific clauses','Contractor personnel SOFA status'],
+    constraints:'WEXMAC 2.0 scope limitations — verify logistics advisory falls within vehicle scope before competing.',
+    tradeoff:'Fastest of all options if requirement fits WEXMAC scope. Highly theater-specific.'
+  },
+  s9:{
+    rank:3,title:'SBIR Phase III — logistics technology company',type:'Sole-source to validated SBIR recipient',
+    body:'If a logistics technology company (supply chain visibility, demand forecasting, autonomous inventory) has an active SBIR Phase II award applicable to this requirement, a sole-source Phase III award can be executed in 30–45 days without competition.',
+    speed:'FAST',
+    pathway:{vehicle:'SBIR Phase III',authority:'15 USC 638(r) — sole source',timeline:'30–45 days',ceiling:'No ceiling',competition:'None — sole source authorized',steps:['Identify qualifying SBIR Phase II awardee (1 week)','Draft sole-source justification (3–5 days)','CO review and award (7–14 days)','Performance begins immediately'],totalTime:'30–45 days',speedRating:'FAST'},
+    regulations:['15 USC 638(r)','FAR 6.302-5 (authorized by statute)','DFARS 227.7104','CO must document SBIR eligibility'],
+    constraints:'Requires existing SBIR Phase II award relevant to the requirement. Most contracting officers are unfamiliar with this authority — education investment required.',
+    tradeoff:'Fastest sole-source mechanism in DoD. Highly underutilized. Requires SBIR awardee mapping exercise upfront.'
+  },
+  s10:{
+    rank:1,title:'Palantir MetaConstellation / commercial MDA platform',type:'Multi-INT fusion SaaS with government cloud',
+    body:'Commercial MDA fusion platform with AIS integration, vessel tracking, pattern of life, and anomaly detection. Available on AWS GovCloud (IL4/IL5). Deployed with multiple CCMDs. OASIS+ eligible.',
+    speed:'FAST',
+    pathway:{vehicle:'OASIS+ / GSA MAS',authority:'FAR 8.405 / 16.504',timeline:'30–60 days',ceiling:'Unlimited/Schedule',competition:'Order competition',steps:['Task order solicitation (5–7 days)','Award (7–10 days)','Cloud environment setup (14–21 days)','Data integration (14–30 days)','Operational (30–60 days total)'],totalTime:'30–60 days',speedRating:'FAST'},
+    regulations:['FedRAMP authorized (GovCloud)','CMMC Level 2','DFARS 252.204-7012 (cyber)','AIS data — UNCLOS considerations for partner nation waters','Classification handling — SECRET level requires accredited environment'],
+    constraints:'Partner nation data sharing requires bilateral agreements. Classification of integrated product determines SCIF requirement.',
+    tradeoff:'Proven platform. Fast. Commercial data costs ongoing. Partner nation data sharing agreements are the critical path.'
+  },
+  s11:{
+    rank:2,title:'L3Harris — SeaVision + GCSS-M integration',type:'Government MDA C2 system integration',
+    body:'SeaVision is the DHS/USCG unclassified MDA picture. GCSS-M (Global Command and Control System-Maritime) is the DoD classified layer. L3Harris integration between the two layers plus partner nation feeds.',
+    speed:'MED',
+    pathway:{vehicle:'EAGLE II BOA / NAVSEA SeaPort-NxG',authority:'FAR 16.504',timeline:'60–120 days',ceiling:'Program ceiling',competition:'Limited BOA holders',steps:['Technical requirements definition (2–3 weeks)','Task order competition (2–3 weeks)','Award (1 week)','Integration and accreditation (4–8 weeks)'],totalTime:'60–120 days',speedRating:'MED'},
+    regulations:['DFARS 252.239-7017 (supply chain risk)','CMMC Level 3 likely','TS/SCI facility requirement for GCCS-M feeds','Partner nation information sharing — CJCS bilateral agreement required'],
+    constraints:'System accreditation for classified feeds is the critical path. DCSA involvement required for classified system integration.',
+    tradeoff:'Authoritative government MDA picture. Slower due to accreditation. Best for long-term persistent capability.'
+  },
+  s12:{
+    rank:3,title:'OTA prototype — custom regional MDA architecture',type:'Purpose-built regional fusion via OTA',
+    body:'Custom regional MDA architecture via OTA prototype. Enables integration of non-standard partner nation data sources, unclassified commercial feeds, and classified DoD systems in a tailored architecture.',
+    speed:'MED',
+    pathway:{vehicle:'OTA — 10 USC 4022',authority:'10 USC 4022',timeline:'60–90 days',ceiling:'Negotiated',competition:'None',steps:['Consortium formation (1–2 weeks)','Agreement drafting (2 weeks)','Prototype development (4–6 weeks)','Integration testing (2 weeks)'],totalTime:'60–90 days',speedRating:'MED'},
+    regulations:['10 USC 4022','Non-traditional contractor required','No FAR compliance required for prototype','ATO process still required for classified systems'],
+    constraints:'ATO (Authority to Operate) for classified integration still required regardless of OTA. Plan 30–60 days for ATO process.',
+    tradeoff:'Maximum flexibility. Moderate speed. ATO is non-negotiable and cannot be bypassed.'
+  },
+  s13:{
+    rank:1,title:'ProShield Solutions — CBRN L1/L2 training package',type:'Turnkey training with fieldable detection equipment',
+    body:'Comprehensive CBRN L1 and L2 training curriculum with fieldable JCAD, MINICAD, and M8A1 training variants. Delivered in-country or CONUS. Sec 333-compatible. Prior SOUTHCOM AOR experience. ITAR Category XIV — export license required for detection equipment.',
+    speed:'MED',
+    pathway:{vehicle:'OASIS+ / DTRA CORA',authority:'FAR 16.504 + 10 USC 333',timeline:'60–90 days',ceiling:'Program ceiling',competition:'Task order (limited)',steps:['Leahy vetting — all partner units (30–60 days — run in parallel)','ITAR Cat XIV license for detection equipment (60–90 days — parallel)','Task order award (14–21 days)','Instructor deployment and training (30–45 days)'],totalTime:'60–90 days (parallel tracks)',speedRating:'MED'},
+    regulations:['Leahy Law — all partner personnel','ITAR Category XIV (detection equipment) — export license','10 USC 333 congressional notification','End-use monitoring — Golden Sentry','DTRA CORA vehicle scope verification'],
+    constraints:'Run Leahy vetting and ITAR license application in parallel — not in series. Serial execution adds 60–90 days. This is the most common execution failure in security cooperation.',
+    tradeoff:'Strong combination of speed and capability. Parallel track execution is essential.'
+  },
+  s14:{
+    rank:2,title:'CBRN TTPs development — SOCOM advisory team',type:'SOF advisory via 127e / Sec 333',
+    body:'U.S. SOF advisory team (SFODA or equivalent) embedded with partner unit to develop CBRN TTPs, train using partner-procured or existing equipment, and build organic detection capability. No U.S. equipment transfer — avoids ITAR.',
+    speed:'MED',
+    pathway:{vehicle:'10 USC 127e / Sec 333',authority:'SecDef approval (127e) or DoS-DoD (333)',timeline:'45–90 days',ceiling:'Program budget',competition:'N/A — government personnel',steps:['Leahy vetting (30–60 days)','Authority approval (127e: SecDef; 333: DoS-DoD) (30–45 days)','Team deployment (14–21 days)','Training execution (30–45 days)'],totalTime:'45–90 days',speedRating:'MED'},
+    regulations:['10 USC 127e (SecDef approval required) or 10 USC 333','Leahy Law — all partner units','No ITAR if no U.S. equipment transfer','Congressional notification thresholds vary by authority'],
+    constraints:'127e requires SecDef approval — significant timeline. 333 requires DoS-DoD coordination. Leahy vetting is non-negotiable and must start immediately.',
+    tradeoff:'No ITAR delay. Builds deeper partner relationships. Limited by available SOF team capacity.'
+  },
+  s15:{
+    rank:3,title:'IMET — CBRN school pipeline',type:'Partner nation personnel at U.S. military CBRN schools',
+    body:'Partner nation CBRN personnel attend U.S. Army CBRN School (Fort Leonard Wood) or equivalent through IMET funding. Builds long-term institutional capacity. No equipment transfer — avoids ITAR.',
+    speed:'SLOW',
+    pathway:{vehicle:'IMET — 22 USC 2347',authority:'DoS-DoD IMET program',timeline:'6–18 months',ceiling:'IMET allocation',competition:'N/A',steps:['IMET nomination submission (30 days)','Leahy vetting (30–60 days)','School scheduling and seat availability (3–6 months)','Training execution (weeks–months)'],totalTime:'6–18 months',speedRating:'SLOW'},
+    regulations:['22 USC 2347 IMET regulations','Leahy Law vetting mandatory','SAMM Chapter 10','Security clearance / background check for partner personnel'],
+    constraints:'School seat availability is often the critical path item — not policy. Plan 3–6 months minimum for school scheduling.',
+    tradeoff:'Slowest path. Highest long-term institutional impact. No equipment transfer complications.'
+  },
+  s16:{
+    rank:1,title:'Cleared analytical support — OASIS+ TS',type:'Contractor intelligence analysts (TS/SCI)',
+    body:'TS/SCI-cleared contractor analytical team through OASIS+ (TS pool). Pattern of life, GEOINT/SIGINT fusion, threat network analysis, finished intelligence production support. Multiple established vendors with cleared personnel benches.',
+    speed:'FAST',
+    pathway:{vehicle:'OASIS+ (TS pool)',authority:'FAR 16.504 task order',timeline:'30–60 days',ceiling:'Unlimited IDIQ',competition:'Task order competition (limited to TS pool)',steps:['Security requirements defined (3–5 days)','Task order solicitation to TS pool (7–10 days)','Award (5–7 days)','Personnel clearance verification and badging (7–21 days)','Analytical operations begin (30–60 days total)'],totalTime:'30–60 days',speedRating:'FAST'},
+    regulations:['DFARS 252.204-7012 (cyber incident reporting)','CMMC Level 3','TS/SCI facility accreditation (DCSA)','SCIF access requirements','Insider threat program compliance'],
+    constraints:'Badging and SCIF access for contractor personnel is often the rate-limiting step. Pre-establish access procedures before award if possible.',
+    tradeoff:'Fastest path to cleared analytical capacity. Premium cost. Well-established vehicle and vendor base.'
+  },
+  s17:{
+    rank:2,title:'WEXMAC 2.0 — SOUTHCOM-specific intel support',type:'Theater-specific cleared contractor support',
+    body:'WEXMAC 2.0 vehicles include cleared analytical support with theater-specific knowledge and existing relationships with SOUTHCOM J2. Streamlined access, existing clearances, area familiarization.',
+    speed:'FAST',
+    pathway:{vehicle:'WEXMAC 2.0',authority:'SOUTHCOM IDIQ',timeline:'14–30 days',ceiling:'Classified',competition:'WEXMAC holders (limited)',steps:['Task order package (2–3 days)','Solicitation (5–7 days)','Award (3–5 days)','Personnel verification (5–14 days)'],totalTime:'14–30 days',speedRating:'FAST'},
+    regulations:['SOUTHCOM acquisition regulations','DFARS 252.204-7012','Existing SCIF arrangements through WEXMAC','Contractor personnel SOFA status if deployed forward'],
+    constraints:'Verify intelligence analytical support falls within WEXMAC 2.0 scope before competing.',
+    tradeoff:'Fastest option. Theater-specific. Limited to WEXMAC holder pool.'
+  },
+  s18:{
+    rank:3,title:'EAGLE II BOA — SOF intel analytical support',type:'Special operations intel support',
+    body:'EAGLE II Broad Ocean Area BOA supports SOF-adjacent analytical functions. Relevant for SOUTHCOM requirements with SOF operational nexus (SOCSOUTH, JSOC support).',
+    speed:'MED',
+    pathway:{vehicle:'EAGLE II BOA',authority:'FAR 16.703',timeline:'30–60 days',ceiling:'Program ceiling',competition:'BOA competition',steps:['Requirement scoping (1 week)','BOA solicitation (1–2 weeks)','Award (1 week)','Mobilization (2–4 weeks)'],totalTime:'30–60 days',speedRating:'MED'},
+    regulations:['USSOCOM acquisition regulations','FAR 16.703','TS/SCI access requirements','Operational security (OPSEC) plan required'],
+    constraints:'Must establish SOF nexus for EAGLE II BOA. May require SOCSOUTH coordination.',
+    tradeoff:'Strong option where SOF mission nexus exists. Broader pool than WEXMAC for some analytical specializations.'
+  },
+  s19:{
+    rank:1,title:'DroneShield DroneSentry-C2 — fixed-site integrated architecture',type:'Persistent multi-layer detection and defeat for fixed infrastructure',
+    body:'Fixed-site integrated cUAS architecture with RF detection, radar, EO/IR, and integrated defeat. Designed for perimeter protection of critical infrastructure. Non-Chinese hardware. DoD and DHS-deployed.',
+    speed:'FAST',
+    pathway:{vehicle:'EAGLE II BOA / OASIS+ / DHS SAFETY Act',authority:'FAR 16.504 / DHS SAFETY Act designation',timeline:'30–60 days for detection; 60–90 days with defeat integration',ceiling:'Program ceiling',competition:'Limited',steps:['Requirement and site survey (1 week)','Task order award (2–3 weeks)','Equipment delivery (2–3 weeks)','Integration and training (2–3 weeks)'],totalTime:'30–60 days',speedRating:'FAST'},
+    regulations:['NDAA §848 compliant','DHS SAFETY Act if U.S. facility','Safer Skies AEL — defeat capability subject to DHS/DOJ regs if SLTT operated','DoDI 4650.01 spectrum authorization','Host nation law if outside U.S.'],
+    constraints:'If partner nation facility: U.S. SAFETY Act does not apply. Host nation law governs. Spectrum authorization must be obtained from host nation authority. No U.S. legal framework provides DoD authority to protect private foreign infrastructure without specific agreement.',
+    tradeoff:'Best integrated solution. Regulatory complexity highest for partner nation sites.'
+  },
+  s20:{
+    rank:2,title:'Dedrone + Fortem Technologies SkyDome',type:'Detection (Dedrone) + kinetic defeat (Fortem DroneHunter)',
+    body:'Layered architecture pairing Dedrone RF detection with Fortem DroneHunter net-capture autonomous intercept drone. Non-kinetic defeat — avoids collateral damage concerns. Suitable for facilities where explosive defeat is not authorized.',
+    speed:'MED',
+    pathway:{vehicle:'OASIS+ / OTA prototype',authority:'FAR 16.504 / 10 USC 4022',timeline:'45–90 days',ceiling:'Negotiated',competition:'Limited/None',steps:['Architecture design (1 week)','Procurement (2–4 weeks)','Integration (2–3 weeks)','Testing and certification (2–4 weeks)'],totalTime:'45–90 days',speedRating:'MED'},
+    regulations:['NDAA §848 compliant (both vendors)','FCC Part 15 — Dedrone receiver','FAA authorization required for DroneHunter autonomous intercept operations','Safer Skies AEL pending for SLTT','DoDI 4650.01 for DroneHunter RF defeat'],
+    constraints:'DroneHunter autonomous operations require FAA COA. Processing time: 30–90 days. Must be applied for in parallel with procurement.',
+    tradeoff:'Non-kinetic defeat avoids collateral damage and legal complexity. FAA COA is parallel critical path.'
+  },
+  s21:{
+    rank:3,title:'Host nation organic capability development + U.S. advisory',type:'Sec 333 + IMET + partner nation self-procurement',
+    body:'Develop partner nation indigenous infrastructure protection capability through Sec 333 funding, IMET training, and support for partner nation self-procurement of cUAS systems not subject to U.S. export controls.',
+    speed:'SLOW',
+    pathway:{vehicle:'Sec 333 + IMET',authority:'10 USC 333 + 22 USC 2347',timeline:'6–18 months',ceiling:'Program',competition:'N/A',steps:['Leahy vetting (30–60 days)','Authority approvals (30–60 days)','Training design and deployment (2–3 months)','Partner procurement support (ongoing)'],totalTime:'6–18 months',speedRating:'SLOW'},
+    regulations:['10 USC 333 + congressional notification','22 USC 2347 IMET','Leahy Law — all units','EUM — Golden Sentry if U.S. equipment'],
+    constraints:'Appropriate only where immediate capability gap is tolerable. Avoids U.S. export control complexity entirely if partner self-procures.',
+    tradeoff:'Lowest U.S. cost and legal risk. Highest timeline. Best long-term strategic outcome.'
+  },
+  s22:{
+    rank:1,title:'Envistacom ARTEMIS — spectrum monitoring system',type:'Persistent RF spectrum monitoring 20MHz–6GHz',
+    body:'Tactical and fixed-site RF spectrum monitoring. ARTEMIS provides persistent spectrum monitoring, UAV signal classification, operator geolocation, and frequency management support. DoD and intelligence community deployed. Exportable configuration available.',
+    speed:'FAST',
+    pathway:{vehicle:'EAGLE II BOA / OASIS+',authority:'FAR 16.504',timeline:'21–45 days',ceiling:'Program ceiling',competition:'Limited',steps:['Task order (1–2 weeks)','Equipment delivery (1–2 weeks)','Operator training (1 week)','Deployment (1 week)'],totalTime:'21–45 days',speedRating:'FAST'},
+    regulations:['DoDI 4650.01 — frequency authorization for any transmit functions','ITAR review for exportable config to partner nation','Host nation spectrum authorization required for in-country operations','SOFA/basing agreement for persistent presence'],
+    constraints:'Receive-only operations generally do not require frequency authorization. Any transmit function (jamming, interrogation signals) requires full NTIA/DoDI 4650.01 authorization process.',
+    tradeoff:'Fast for detection/monitoring. Transmit functions add significant regulatory complexity.'
+  },
+  s23:{
+    rank:2,title:'Raytheon Coyote Block 3 + Ku-720 radar',type:'Radar-cued expendable intercept',
+    body:'Ku-720 MMW radar provides detection and cueing. Coyote Block 3 provides kinetic/fragmentation defeat of Group 1–3 UAS. Deployed by U.S. Army in active theaters. ITAR Category XII — export license required for partner nation use.',
+    speed:'MED',
+    pathway:{vehicle:'EAGLE II BOA / Army program',authority:'FAR 16.504 / Army FMS',timeline:'60–120 days (U.S. only); 9–18 months (FMS)',ceiling:'Program ceiling',competition:'Limited',steps:['U.S. use: task order (2–3 weeks)','Delivery (4–6 weeks)','Integration and training (2–3 weeks)','Partner nation: FMS case (9–18 months)'],totalTime:'60 days (U.S.); 9–18 months (FMS)',speedRating:'MED'},
+    regulations:['ITAR Category XII (Coyote) — export license or FMS required','NDAA §848 compliant (Raytheon)','DoDD 3000.09 autonomous weapons review','FAA coordination for defeat operations in NAS'],
+    constraints:'For partner nation use, FMS is the appropriate route. FMS timelines are measured in years not months. Direct commercial sale with ITAR license is faster (6–9 months) but requires close State Dept coordination.',
+    tradeoff:'Combat-proven, high-capability system. Partner nation transfer timeline is the primary constraint.'
+  },
+  s24:{
+    rank:3,title:'OTA prototype — custom spectrum management architecture',type:'Theater-specific spectrum deconfliction and monitoring',
+    body:'Custom spectrum management architecture addressing specific SOUTHCOM AOR conditions: weak host nation governance, mixed commercial/military spectrum users, partner nation interoperability. OTA enables tailored architecture not available from commercial catalog.',
+    speed:'MED',
+    pathway:{vehicle:'OTA — 10 USC 4022',authority:'10 USC 4022',timeline:'60–90 days',ceiling:'Negotiated',competition:'None',steps:['Non-traditional contractor consortium (1–2 weeks)','OTA agreement drafting (2 weeks)','Prototype development (4–6 weeks)','Testing in AOR (2–3 weeks)'],totalTime:'60–90 days',speedRating:'MED'},
+    regulations:['10 USC 4022','NTIA authorization still required for any transmit systems','Host nation bilateral agreements for in-country deployment','ITAR if classified collection capability integrated'],
+    constraints:'OTA removes FAR burden but does not remove spectrum authorization requirements. NTIA and host nation coordination must run in parallel.',
+    tradeoff:'Maximum flexibility for complex theater environment. Best for persistent theater-wide requirement vs. point solution.'
+  }
+};
+
+const PIPELINES = [
+  {id:'p1',name:'OTA — Prototype',auth:'10 USC 4022',speed:'FAST',time:'Weeks–6 months',ceiling:'No ceiling',competition:'None required',
+   body:'Other Transaction Authority for prototype projects. No FAR compliance required. No DFARS. Prototype agreements can be negotiated and signed in weeks. The most important statutory tool for rapid capability fielding. Requires a non-traditional defense contractor in the consortium. Prototype-only — sustained operations require a separate follow-on production agreement with competitive procedures. Best current mechanism for fielding new UAV, cUAS, and spectrum-touching technology rapidly.',
+   regs:['10 USC 4022','DFARS 212.70 (reference)','NDAA §815 (follow-on production)','DoD OTA Guide (2023)'],
+   speed_tips:'Maintain active non-traditional contractor relationships. Pre-draft prototype agreement templates. Use IRAD demonstrations to short-circuit requirements definition. Target: agreement signed within 30 days of requirement identification.'},
+  {id:'p2',name:'SBIR Phase III',auth:'15 USC 638(r)',speed:'FAST',time:'30–90 days',ceiling:'No ceiling',competition:'Sole source — no competition required',
+   body:'The most underutilized speed mechanism in DoD. Phase III allows sole-source awards to SBIR/STTR recipients without competition and without a dollar ceiling. Statutory authority explicitly exempts these awards from competition requirements. The critical step is mapping existing SBIR Phase II awardees to SOUTHCOM requirements before a requirement surfaces. Most contracting officers are unfamiliar with this authority — investment in CO education pays speed dividends.',
+   regs:['15 USC 638(r)','FAR 6.302-5 (authorized by statute)','DFARS 227.7104','SBA Policy Directive'],
+   speed_tips:'Map SOUTHCOM requirements against existing SBIR Phase II awardees quarterly. Maintain a living register of qualified Phase II recipients by capability domain. A 30-day award is achievable with a prepared requirements package.'},
+  {id:'p3',name:'Micro-purchase / SAP',auth:'FAR Part 13',speed:'FAST',time:'Days–weeks',ceiling:'$10K (micro) / $250K (SAP)',competition:'Simplified — minimal',
+   body:'Micro-purchase ($10K threshold) requires no competition. Simplified Acquisition Procedures (SAP) up to $250K uses simplified competition and evaluation. Useful for small capability insertions, consumables, limited advisory services, and bridge solutions while larger procurements are processed. Not adequate for major systems but underutilized for small tactical capability gaps.',
+   regs:['FAR Part 13','FAR 13.201','FAR 13.301 (SAP)','DFARS 213.301'],
+   speed_tips:'Establish purchase card limits at maximum authorized levels. Train CORs on SAP procedures. Use for bridge capability while main procurement processes.'},
+  {id:'p4',name:'BPA — GSA Schedule',auth:'FAR 8.405-3',speed:'MED',time:'2–8 weeks',ceiling:'Schedule ceiling',competition:'Limited — among BPA holders',
+   body:'Blanket Purchase Agreements established against GSA Schedule contracts. Once BPAs are established, individual call orders can be placed in days to weeks with minimal justification. The investment is in establishing BPAs upfront — against OASIS+, GSA MAS, and other vehicles — before specific requirements surface. Recurring capability categories should have pre-established BPAs.',
+   regs:['FAR 8.405-3','FAR 13.303','GSA Order ADM 4800.2H','GSA MAS regulations'],
+   speed_tips:'Establish BPAs proactively for recurring SOUTHCOM capability categories. Call orders against existing BPAs can move in 3–5 business days.'},
+  {id:'p5',name:'OASIS+',auth:'GSA IDIQ — Multiple pools',speed:'MED',time:'4–12 weeks',ceiling:'Unlimited',competition:'Task order competition (pool)',
+   body:'One Source Acquisition Solution for Integrated Services Plus. GSA\'s premier vehicle for complex professional services — management consulting, program management, logistics, IT, engineering. Multiple small business and unrestricted pools. SOUTHCOM uses extensively for advisory, program management, and analytical services. No dollar ceiling. OASIS+ TS pool for TS/SCI-required work.',
+   regs:['FAR 16.504','FAR 8.405','GSA OASIS+ contract','DFARS applicable clauses'],
+   speed_tips:'Establish agency-level BPAs against OASIS+ for recurring service categories. Streamlined task order process for BPA call orders.'},
+  {id:'p6',name:'WEXMAC 2.0',auth:'SOUTHCOM-owned IDIQ',speed:'MED',time:'2–6 weeks',ceiling:'Classified',competition:'WEXMAC holders only',
+   body:'Western Hemisphere exercise, engagement, and activities contract. SOUTHCOM-specific vehicle with pre-vetted contractors familiar with theater requirements, partner nations, and security classification levels. Streamlined task order process. Fastest of the IDIQ vehicles for SOUTHCOM-specific requirements. Scope covers logistics, security cooperation support, advisory, and language services.',
+   regs:['FAR 16.504','SOUTHCOM acquisition regulations','DFARS theater clauses','Contractor personnel SOFA status provisions'],
+   speed_tips:'First choice for SOUTHCOM-specific requirements if the requirement fits WEXMAC scope. Verify scope before competing — misaligned requirements cause delays.'},
+  {id:'p7',name:'LOGCAP V',auth:'Army IDIQ — theater logistics',speed:'MED',time:'8–20 weeks',ceiling:'$82 billion',competition:'Task order competition',
+   body:'Logistics Civil Augmentation Program V. Army-owned but available to all DoD components and combatant commands. Covers field services, base operations support, supply chain, construction, transportation, and theater logistics. COCO-compatible logistics structures. Most relevant for JTF-level logistics requirements with a significant base operations or supply chain component.',
+   regs:['FAR 16.504','DFARS 237.102','Army FAR Supplement (AFARS)','LOGCAP policy memoranda'],
+   speed_tips:'LOGCAP task orders are slower than WEXMAC due to Army-level contracting. Use WEXMAC 2.0 where scope permits. LOGCAP for large-scale theater logistics only.'},
+  {id:'p8',name:'EAGLE II BOA',auth:'USSOCOM BOA',speed:'MED',time:'6–14 weeks',ceiling:'Program ceiling',competition:'BOA competition',
+   body:'Broad Ocean Area — USSOCOM broad agency agreement structure supporting special operations and irregular warfare. Covers advisory services, ISR support, language services, logistics, and sensitive activity support. Relevant for SOUTHCOM requirements with SOF mission nexus (SOCSOUTH, JSOC). Requires SOF operational nexus justification.',
+   regs:['FAR 16.703','10 USC 167 (USSOCOM authority)','USSOCOM acquisition regulations','Operational security requirements'],
+   speed_tips:'Requires SOF nexus — coordinate with SOCSOUTH J4/J8 early. Strong vehicle for requirements requiring cleared personnel with special operations experience.'},
+  {id:'p9',name:'DTRA CORA',auth:'DTRA IDIQ',speed:'MED',time:'8–16 weeks',ceiling:'Program ceiling',competition:'Task order competition',
+   body:'Defense Threat Reduction Agency Contracted Advisory and Assistance Services. Covers CBRNE threat reduction, WMD defeat, biosecurity, radiological detection, and chemical defense. Relevant for SOUTHCOM CBRNE requirements and partner nation chemical/biological defense capacity building. Requires DTRA coordination.',
+   regs:['FAR 16.504','DTRA acquisition policy','10 USC 4173 (DTRA authority)','DoDD 5160.05E'],
+   speed_tips:'Requires DTRA sponsorship for task order placement. Build DTRA relationships before requirements surface. CBRNE-specific — do not try to fit non-CBRNE requirements into this vehicle.'},
+  {id:'p10',name:'SeaPort-NxG',auth:'NAVSEA IDIQ',speed:'MED',time:'8–20 weeks',ceiling:'$5 billion',competition:'Task order competition',
+   body:'Naval engineering, logistics, program management, and technical services. Multiple award IDIQ with broad scope for Navy-related requirements. Relevant for SOUTHCOM maritime domain awareness, port security assessment, and naval technical services in support of theater maritime requirements.',
+   regs:['FAR 16.504','NMCARS (Navy supplement)','NAVSEA acquisition policy','Shipbuilding and conversion appropriations rules'],
+   speed_tips:'Useful for maritime-specific technical requirements. Slower than WEXMAC or OASIS+ for advisory-only work. Best when engineering or naval technical content is primary.'},
+  {id:'p11',name:'GSA MAS Schedules',auth:'FAR Part 8',speed:'MED',time:'3–10 weeks',ceiling:'Schedule ceiling',competition:'Order competition',
+   body:'Multiple Award Schedules. Pre-competed commercial contracts available to all federal agencies. Schedules 541 (professional services), 561 (facilities), 874 (MOBIS management consulting), 70 (IT) most relevant. Order competition required among schedule holders but significantly simplified versus full competition. Commercial items emphasis.',
+   regs:['FAR Part 8','FAR 8.405','GSA Order ADM 4800.2H','Trade Agreements Act compliance'],
+   speed_tips:'Establish agency BPAs against MAS for recurring categories. Direct orders to GSA schedule holders for commercial items can move in 2–3 weeks.'},
+  {id:'p12',name:'Undefinitized Contract Action (UCA)',auth:'FAR 16.603 / DFARS 217.74',speed:'MED',time:'Work begins immediately; definitize within 180 days',ceiling:'Negotiated at definitization',competition:'Justified',
+   body:'Allows work to begin before contract terms are finalized. Useful when urgent need cannot wait for full contract negotiation. Government pays at a provisional rate; final price negotiated within 180 days. Significant audit risk — COs avoid UCAs except in genuine urgency. Requires Head of Contracting Activity (HCA) approval above certain thresholds. Legitimate and underused.',
+   regs:['FAR 16.603','DFARS 217.7401','DFARS 217.7404 (HCA approval thresholds)','USD(A&S) UCA policy memoranda'],
+   speed_tips:'Use for genuine operational urgency only. Prepare definitization package in parallel with work commencement to hit 180-day window.'},
+  {id:'p13',name:'Full & Open Competition — IDIQ',auth:'FAR Part 15 / FAR 16.504',speed:'SLOW',time:'12–24 months',ceiling:'Negotiated',competition:'Full & open — mandatory',
+   body:'Standard competitive acquisition resulting in a new IDIQ vehicle or single-award contract. Required when no existing vehicle applies and no statutory exception justifies a different approach. Source selection plan, evaluation criteria, proposal evaluations, award decision. Maximally defensible but maximally slow. Appropriate for establishing new vehicle with long-term horizon — never for urgent operational needs.',
+   regs:['FAR Part 15','FAR 16.504','DFARS Part 215','FAR 6.1 (full and open competition)','CICA (Competition in Contracting Act)'],
+   speed_tips:'If requirements are recurring and predictable, invest in an IDIQ now to unlock task order speed later. The best time to run a full competition is before you have an urgent need.'},
+  {id:'p14',name:'Program of Record',auth:'DoD 5000 series / JCIDS',speed:'SLOW',time:'5–15 years',ceiling:'FYDP funded',competition:'Full & open at each phase',
+   body:'Milestone-based acquisition through the Defense Acquisition System. JCIDS requirements process (ICD, CDD, CPD), Analysis of Alternatives, Milestone A (concept), Milestone B (development), Milestone C (production). Appropriate for major weapon systems and platforms with multi-decade service lives. Categorically inappropriate for urgent operational technology needs in a domain where the adversary iterates in weeks.',
+   regs:['DoDI 5000.02','CJCSI 3170.01 (JCIDS)','DoDI 5000.85 (software acquisition)','DoDI 5000.88 (engineering)'],
+   speed_tips:'The answer is never a program of record for urgent needs. Document the capability gap, place an immediate OTA or SBIR action, and initiate PoR in parallel only if long-term program is warranted.'}
+];
+
+const SECCOOP_AUTHORITIES = [
+  {id:'sc1',name:'Section 333 — Building Partner Capacity',auth:'10 USC 333',speed:'MED',time:'60–180 days',
+   body:'Primary authority for training and equipping partner nation security forces for operations against terrorism, WMD, illicit narcotics trafficking, and other threats of mutual concern. Requires Secretary of Defense concurrence with DoS and formal congressional notification. Annual NDAA reauthorization. Most widely used SOUTHCOM security cooperation authority.',
+   regs:['10 USC 333','22 USC 2304 (human rights)','Leahy Law (10 USC 362)','SAMM Chapter 10','DoD 5105.38-M'],
+   constraint:'Congressional notification required. Sec 333 committee notification process takes 15–30 days. Plan accordingly. Leahy vetting must be completed before any training or equipment transfer.'},
+  {id:'sc2',name:'Section 127e — SOF Indirect Approach',auth:'10 USC 127e',speed:'MED',time:'60–120 days',
+   body:'Enables U.S. Special Operations Forces to support foreign forces, irregular forces, groups, or individuals engaged in supporting or facilitating ongoing military operations by U.S. SOF to combat terrorism. High classification. Limited disclosure. Requires Secretary of Defense approval and specific legal authorities. Used in SOUTHCOM for counter-narcotics adjacent operations with SOF nexus.',
+   regs:['10 USC 127e','Classified implementing guidance','USSOCOM policy','Congressional notification (classified)'],
+   constraint:'SecDef approval is the critical path — cannot be delegated below that level. Classified reporting requirements. Significant legal review time. Not appropriate for routine advisory requirements.'},
+  {id:'sc3',name:'Section 1202 — Irregular Warfare Support',auth:'10 USC 1202',speed:'MED',time:'60–120 days',
+   body:'Provides authority to support irregular forces, foreign forces, or individuals engaged in support of U.S. irregular warfare objectives. Distinct from 127e in scope and approval authorities. Congressional notification required above thresholds. Relevant for SOUTHCOM IW-designated activities where 127e is not available.',
+   regs:['10 USC 1202','DoD IW Annex to NDS','Congressional notification requirements','Classified implementing guidance'],
+   constraint:'Requires DoD IW Annex designation of the relevant activity. Legal review intensive. Congressional notification thresholds must be tracked carefully.'},
+  {id:'sc4',name:'FMF — Foreign Military Financing',auth:'22 USC 2763 / AECA',speed:'SLOW',time:'12–36 months (case execution)',
+   body:'Grant or loan financing enabling partner nations to purchase U.S. defense articles and services. DoS-administered, DoD/DSCA-executed through Foreign Military Sales cases. End-use monitoring required under Golden Sentry program. Blue Lantern for pre-license checks. Appropriate for major equipment transfer — not for advisory services or training alone.',
+   regs:['22 USC 2763','Arms Export Control Act (AECA)','SAMM Chapter 9','Golden Sentry EUM program','Blue Lantern pre-license checks'],
+   constraint:'FMS case opening takes 30–60 days. Case execution (LOA signature through delivery) is measured in months to years depending on equipment. Not a rapid fielding mechanism.'},
+  {id:'sc5',name:'IMET — International Military Education & Training',auth:'22 USC 2347',speed:'MED',time:'3–12 months',
+   body:'Provides funding for partner nation military and civilian security personnel to attend U.S. military schools, education programs, and professional military education. Relationship-building and institutional capacity development as much as technical training. Administered through DISAM. Nominations submitted through ODC/SAO country teams.',
+   regs:['22 USC 2347','AECA','SAMM Chapter 10','DISAM regulations','School seat availability policies'],
+   constraint:'School seat availability is often the critical path, not policy. Nominations submitted 6–12 months in advance for most programs. Leahy vetting mandatory for all nominees.'},
+  {id:'sc6',name:'Section 2282 — Counter-Narcotics Activities',auth:'10 USC 2282',speed:'MED',time:'60–120 days',
+   body:'Authorizes DoD support for counter-narcotics activities including detection and monitoring of illegal drug trafficking, training of partner nation forces, and equipment provision for CN activities. Historically central to SOUTHCOM mission. Significant annual budget allocation. Requires DoS concurrence and Leahy vetting.',
+   regs:['10 USC 2282','22 USC 2291 (CN authorities)','Leahy Law','DoD CN policy','DoS-DoD coordination requirements'],
+   constraint:'DoS concurrence required — coordinate early. Leahy vetting for all partner units. Annual budget cycle dependency for new programs.'},
+  {id:'sc7',name:'Section 2561 — Humanitarian Assistance',auth:'10 USC 2561',speed:'FAST',time:'Days–weeks for immediate; weeks for planned',
+   body:'Authorizes DoD provision of humanitarian assistance to foreign countries. Includes transportation of humanitarian relief supplies, excess property transfer, and medical readiness training. Used in SOUTHCOM for disaster response, medical exercises (MEDRETES), and humanitarian engineering projects. Limited to humanitarian purpose — cannot be used to build partner military capability.',
+   regs:['10 USC 2561','FAR Part 18 (contingency)','Theater campaign plan alignment','DSCA regulations'],
+   constraint:'Must be humanitarian in nature — cannot be used for security force assistance. Strong mechanism for building partner relationships and people-to-people ties.'},
+  {id:'sc8',name:'FMS — Foreign Military Sales',auth:'22 USC 2761 / AECA',speed:'SLOW',time:'1–5 years (LOA through delivery)',
+   body:'Government-to-government sale of U.S. defense articles, defense services, and military education and training. More oversight and accountability than direct commercial sale. Price includes DoD administrative fee. Used for major equipment programs, platform sales, and sustainment. Preferred U.S. government mechanism for large-scale equipment transfer.',
+   regs:['22 USC 2761','AECA','SAMM (Security Assistance Management Manual)','FMR (Financial Management Regulation)','ITAR (applies to articles on USML)'],
+   constraint:'FMS LOA (Letter of Offer and Acceptance) signature is the starting gate. Timeline from LOA signature to delivery is highly variable by item — spare parts weeks, major platforms years.'}
+];
+
+const CISA_SECTORS = [
+  {id:'cs1',icon:'⚡',name:'Energy',risk:'critical',body:'Power generation, transmission, and distribution. Oil and gas production, storage, and delivery. Caribbean and South American grid infrastructure. Venezuelan oil sector. Panama Canal power systems. Primary UAV target due to high consequence of disruption and often remote, under-protected facilities.',threat:'UAV ISR, payload delivery, ICS/SCADA probing via RF proximity',acq:'OASIS+, EAGLE II BOA, DHS CISA programs, Safer Skies grants (SLTT)',reg:'PPD-21, NERC CIP, NIST CSF, DOE regulations'},
+  {id:'cs2',icon:'⚛',name:'Nuclear / SMR',risk:'critical',body:'Traditional nuclear facilities plus emerging SMR deployments at forward locations, island chain installations, and partner nation sites. SMRs inherit the full NRC regulatory framework in a more exposed, less defended configuration. The convergence of nuclear infrastructure and forward deployment creates a threat profile with no historical precedent.',threat:'UAV overflight, communication exploitation, cyber-physical attack via proximate drone operations, physical breach enabling',acq:'DoD program integration (DoE + NRC + DoD), specialized security contractors, OTA for prototype protection systems',reg:'10 CFR 73 (physical security), 10 CFR 73.54 (cyber), NRC inspection authority, PPD-21'},
+  {id:'cs3',icon:'🚢',name:'Transportation',risk:'critical',body:'Panama Canal — the single most strategically significant infrastructure chokepoint in the SOUTHCOM AOR. Regional ports, airfields, road networks, and rail systems. Maritime chokepoints. UAV surveillance of vessel traffic enables intelligence collection on U.S. military and commercial shipping patterns.',threat:'UAV pattern of life on vessel traffic, port vulnerability mapping, airfield approach surveillance',acq:'NAVSEA SeaPort-NxG, EAGLE II BOA, port authority agreements, CISA',reg:'MTSA (Maritime Transportation Security Act), FAA regulations, CBP requirements'},
+  {id:'cs4',icon:'💧',name:'Water / Wastewater',risk:'high',body:'Municipal water systems in SOUTHCOM partner nations. Water treatment facilities. Dams and reservoirs. High vulnerability due to aging infrastructure, limited security staffing, and reliance on industrial control systems with minimal cybersecurity. UAV-enabled access to ICS systems on open or weakly protected wireless networks.',threat:'ICS/SCADA network probing, sensor tampering, physical infrastructure reconnaissance',acq:'USAID programs, Sec 333 for partner nation protection capacity, CISA',reg:'Safe Drinking Water Act (U.S.), EPA regulations, partner nation environmental law'},
+  {id:'cs5',icon:'📡',name:'Communications',risk:'high',body:'Undersea fiber optic cables with landing stations in SOUTHCOM AOR. Satellite ground stations. Commercial cellular infrastructure. Internet exchange points. Disruption of undersea cables has been demonstrated as a viable covert operation by multiple state actors.',threat:'Cable landing station surveillance, ground station approach mapping, cellular tower jamming for localized communications denial',acq:'FCC, CISA, DoD (for military communications infrastructure)',reg:'Communications Act, FCC regulations, CISA authorities'},
+  {id:'cs6',icon:'🏭',name:'Defense Industrial Base',risk:'high',body:'Forward maintenance facilities, pre-positioned equipment sites, contractor logistics nodes, and depot facilities in the SOUTHCOM AOR and CONUS supporting SOUTHCOM operations. Includes contractor-operated facilities under LOGCAP and WEXMAC.',threat:'Facility surveillance, supply chain mapping, personnel pattern of life',acq:'DCSA programs, LOGCAP V, EAGLE II BOA, DoD physical security programs',reg:'DFARS 252.204-7012, CMMC, DoD physical security regulations'},
+  {id:'cs7',icon:'🏥',name:'Healthcare / Public Health',risk:'med',body:'Military and partner nation medical facilities. Disease surveillance systems. Pharmaceutical supply chains. Medical research facilities. Relevant to SOUTHCOM biosecurity mission and counter-bioterrorism activities.',threat:'Facility reconnaissance, supply chain surveillance, biosurveillance system disruption',acq:'USAID, DoD CBRNE programs, DTRA CORA',reg:'HIPAA (U.S. facilities), DoD medical regulations, CISA'},
+  {id:'cs8',icon:'💰',name:'Financial Services',risk:'med',body:'Regional banking infrastructure. Panama financial system (money laundering nexus). Cryptocurrency exchanges used for illicit finance. Relevant to counter-narcotics and transnational criminal organization financial interdiction.',threat:'Financial system reconnaissance, ATM network surveillance, exchange monitoring',acq:'Treasury programs, DoJ, DEA, FinCEN partnerships',reg:'Bank Secrecy Act, OFAC regulations, AML frameworks'},
+  {id:'cs9',icon:'🌾',name:'Food / Agriculture',risk:'med',body:'Agricultural production in SOUTHCOM AOR. Food supply chains. Relevant to biosecurity (agroterrorism) and to the economic stability of partner nations dependent on agricultural exports.',threat:'Crop surveillance (dual-use), precision agricultural system exploitation, supply chain mapping',acq:'USDA, USAID, Sec 333 for biosecurity capacity',reg:'USDA regulations, FSMA, partner nation agricultural law'},
+  {id:'cs10',icon:'🔧',name:'Critical Manufacturing',risk:'med',body:'Manufacturing facilities producing equipment critical to national defense and emergency response. In SOUTHCOM context: facilities producing goods subject to supply chain interdiction by TCOs.',threat:'Facility surveillance, supply chain mapping, workforce targeting',acq:'Commerce Department, CISA, DoD DIB programs',reg:'CFIUS regulations, EAR, defense production regulations'},
+  {id:'cs11',icon:'🏗',name:'Dams / Flood Control',risk:'high',body:'Major dam infrastructure in SOUTHCOM AOR — Gatun Lake (Panama Canal), Guri Dam (Venezuela), Itaipu (Brazil/Paraguay). Failure of major dams has catastrophic consequences for downstream populations and critical infrastructure.',threat:'Structural reconnaissance, spillway surveillance, monitoring system probing',acq:'USACE programs, USAID, bilateral engineering agreements',reg:'FERC (U.S.), partner nation water law, ICOLD standards'},
+  {id:'cs12',icon:'☢',name:'Nuclear Reactors / Materials',risk:'critical',body:'Existing nuclear research reactors in SOUTHCOM AOR partner nations. Nuclear materials storage and transport. Closely related to SMR category but covers existing operational facilities and materials security.',threat:'Facility surveillance, materials transport route mapping, perimeter probing',acq:'DOE/NNSA programs, DTRA CORA, bilateral nuclear cooperation agreements',reg:'NRC, IAEA safeguards, 10 CFR 73, partner nation nuclear regulatory authority'},
+  {id:'cs13',icon:'🏛',name:'Government Facilities',risk:'med',body:'Embassy facilities, ODC/SAO country team locations, partner nation government buildings, and U.S. military installations in the SOUTHCOM AOR.',threat:'Perimeter surveillance, entry point mapping, dignitary movement tracking',acq:'DoS diplomatic security, DoD physical security programs, EAGLE II BOA',reg:'DoS security standards, DoD physical security regulations, host nation diplomatic law'},
+  {id:'cs14',icon:'🚨',name:'Emergency Services',risk:'med',body:'Fire, EMS, law enforcement in SOUTHCOM partner nations. Relevant to partner nation resilience and the military\'s role in supporting civilian emergency response.',threat:'Communications system surveillance, facility mapping',acq:'Sec 333 (if security nexus), USAID, DHS programs',reg:'Partner nation emergency management law, FCC (communications)'},
+  {id:'cs15',icon:'📰',name:'Information Technology',risk:'high',body:'Data centers, cloud infrastructure, internet backbone. Increasingly relevant as DoD cloud migration brings sensitive workloads onto commercial infrastructure. Contractor-operated systems supporting SOUTHCOM missions.',threat:'Data center reconnaissance, cooling system targeting, physical access probing',acq:'DoD cloud programs, FedRAMP authorized vendors, CISA',reg:'FedRAMP, CMMC, NIST SP 800-53, DFARS 252.204-7012'},
+  {id:'cs16',icon:'⚗',name:'Chemical / Hazmat',risk:'high',body:'Chemical facilities, pipelines, and storage in SOUTHCOM AOR. Dual-use chemicals relevant to counter-narcotics (precursor chemicals). Industrial chemical sites as potential CBRN targets.',threat:'Facility surveillance, storage mapping, precursor chemical monitoring',acq:'DTRA CORA, EPA programs, USAID, DEA-DoD coordination',reg:'CFATS (Chemical Facility Anti-Terrorism Standards), EPA RMP, OPCW conventions'}
+];
+
+const REGS_INDEX = [
+  {section:'Acquisition — base layer',items:[
+    ['FAR','Federal Acquisition Regulation. 53 parts. Base layer for all federal procurement. Governs requirements definition, solicitation, evaluation, award, administration, and closeout.'],
+    ['DFARS','Defense Federal Acquisition Regulation Supplement. DoD-specific requirements layered on FAR. Includes CMMC, supply chain risk, autonomous systems provisions, and theater-specific clauses.'],
+    ['AFARS / NMCARS / AFFARS','Army (AFARS), Navy (NMCARS), Air Force (AFFARS) supplements. Service-specific procedures, deviation authorities, and approval thresholds.'],
+    ['FAR Part 13','Simplified Acquisition Procedures. Micro-purchase ($10K), simplified acquisition ($250K), commercial item test threshold ($7.5M). Fastest standard acquisition procedures.'],
+    ['FAR Part 15','Contracting by Negotiation. Full and open competition procedures. Source selection, proposal evaluation, award. Baseline for full competitive acquisitions.'],
+    ['FAR Part 18','Emergency Acquisitions. Expanded authorities during contingencies and emergencies. Increased micro-purchase thresholds, simplified competition requirements, expanded use of existing contracts.'],
+    ['10 USC 4022','Other Transaction Authority for prototype projects. No FAR compliance required. Fastest statutory pathway for new technology. Requires non-traditional contractor participation.'],
+    ['15 USC 638(r)','SBIR/STTR Phase III. Sole-source authority for awards to SBIR recipients. No dollar ceiling. No competition required. Most underutilized speed mechanism in DoD.'],
+    ['FAR 16.703 (BOA)','Broad Agency Agreement authority. Used for EAGLE II and similar special operations vehicles. Pre-competed pool, call orders for specific requirements.']
+  ]},
+  {section:'Cybersecurity and supply chain',items:[
+    ['CMMC 2.0','Cybersecurity Maturity Model Certification. Levels 1–3. Level 1: basic cyber hygiene (self-attestation). Level 2: advanced practices (third-party assessment required for many contracts). Level 3: expert (DIBCAC assessment). Required for all contracts handling CUI.'],
+    ['DFARS 252.204-7021','CMMC contract clause. Requires contractors to maintain and demonstrate CMMC level appropriate to contract requirements. Subflow-down required.'],
+    ['DFARS 252.204-7012','Safeguarding covered defense information. Cyber incident reporting within 72 hours. Cloud service provider requirements. Applies to all DoD contracts with CUI.'],
+    ['NDAA §889 (FY19)','Prohibits procurement of Huawei, ZTE, Hytera Communications, Hikvision, Dahua Technology equipment or services. Applies to all federal contracts and grant recipients. Representations required.'],
+    ['NDAA §848 (FY20)','Prohibits procurement of UAS manufactured by covered Chinese entities — DJI, Autel Robotics, Parrot, Yuneec, and others. Applies to all federal procurement. Does not cover partner nation self-procurement.'],
+    ['DFARS 252.239-7017/18','Supply chain risk management. Identifies and requires mitigation of supply chain risks in information and communications technology. Enhanced SCRM requirements for covered systems.']
+  ]},
+  {section:'Export control and technology transfer',items:[
+    ['ITAR (22 CFR 120–130)','International Traffic in Arms Regulations. Controls all items on the United States Munitions List (USML). License required for export, re-export, retransfer, or disclosure to foreign persons. No de minimis exception. Administered by State Department DDTC.'],
+    ['EAR (15 CFR 730–774)','Export Administration Regulations. Controls dual-use items on Commerce Control List (CCL). License requirements based on ECCN classification, destination (country group), end-use, and end-user. License exceptions available for many items to approved countries.'],
+    ['AECA','Arms Export Control Act. Statutory basis for ITAR, FMF, FMS, and all government-to-government defense article transfers. Presidential authority to designate articles and services on USML. Congressional notification for large transfers.'],
+    ['Leahy Law (22 USC 2378d / 10 USC 362)','Prohibits security assistance to foreign security force units that have committed gross violations of human rights. 22 USC applies to DoS-funded activities; 10 USC applies to DoD-funded activities. No waiver. Unit-level vetting through State Department INVEST system. Mandatory for all SOUTHCOM security cooperation.'],
+    ['ITAR Category XI','Military electronics. Includes radar systems, electronic warfare equipment, directed energy systems. Many cUAS defeat systems fall here. License required for partner nation transfer.'],
+    ['ITAR Category XII','Fire control, range finder, optical, and guidance systems. Covers some cUAS kinetic defeat systems and associated targeting equipment.'],
+    ['ITAR Category XIV','Toxicological agents and detection equipment. Covers CBRN detection systems — JCAD, MINICAD, chemical agent detectors. License required for partner nation transfer.'],
+    ['ITAR Category XV','Spacecraft and related articles. Some satellite communication components for UAV SATCOM links.']
+  ]},
+  {section:'UAV, autonomous systems, and spectrum',items:[
+    ['FAA Part 107','Small UAS rule. Certificate of waiver or authorization (COA) for government operations. Remote ID requirements. LAANC for low-altitude airspace authorization. Applies to all contractor-operated civil UAS in U.S. airspace.'],
+    ['DoDD 3000.09','Autonomous Weapons Systems directive. Defines autonomous, semi-autonomous, and human-supervised modes. Requires senior DoD official approval for autonomous lethal functions. Applies to any UAV with autonomous targeting or weapons functions.'],
+    ['Safer Skies Act (FY26 NDAA)','Enacted December 18, 2025. Authorizes SLTT law enforcement to detect, track, disable, or destroy drones threatening people, critical infrastructure, major public events, or correctional facilities. Requires DHS/DOJ-approved equipment list and federally mandated training/certification. 48-hour notification to DOJ/DHS after each mitigation action. Implementing regulations due ~June 2026. $250M FEMA grant funding FY26.'],
+    ['SkyFoundry Program (FY26 NDAA)','Government-backed domestic drone manufacturing initiative. Responds to Chinese supply chain dominance of commercial drone market. Signals congressional intent for domestic UAV industrial base independence.'],
+    ['DoDI 4650.01','DoD spectrum management policy and procedures for management and use of the electromagnetic spectrum. Frequency authorization required for all DoD transmitting systems. Coordination with NTIA for shared bands. Theater spectrum management through combatant command J6.'],
+    ['NTIA Manual','Manual of Regulations and Procedures for Federal Radio Frequency Management. Governs federal spectrum allocation, assignment, and coordination. Authorization process for new systems: 6–18 months typical.'],
+    ['FCC Part 15','Unlicensed equipment operating rules. Most commercial drone C2 links (900MHz, 2.4GHz, 5.8GHz) operate under Part 15 — no license required, no coordination. Fundamental challenge for cUAS spectrum management: adversary uses unlicensed spectrum that cannot be pre-authorized against.'],
+    ['47 USC 333','Federal law prohibiting willful or malicious interference with radio communications. cUAS jamming systems operated by non-authorized entities may violate this statute. Federal agencies have statutory waivers; SLTT agencies may qualify under Safer Skies Act with authorized equipment.']
+  ]},
+  {section:'Critical infrastructure protection',items:[
+    ['PPD-21','Presidential Policy Directive 21 — Critical Infrastructure Security and Resilience (2013). Establishes CISA as primary federal coordinator. Defines 16 sectors and sector risk management agencies. Framework for federal-private-state coordination.'],
+    ['NIST CSF','Cybersecurity Framework. Identify-Protect-Detect-Respond-Recover structure. Applied to industrial control systems (ICS) and operational technology (OT). Governs cyber-physical security requirements for energy, water, and nuclear sectors. Version 2.0 released 2024.'],
+    ['NERC CIP','Critical Infrastructure Protection standards for bulk electric system. Mandatory, enforceable standards with financial penalties. Covers electronic security perimeters, physical security of cyber systems, incident reporting, recovery. Relevant to energy sector facilities in SOUTHCOM AOR receiving U.S. assistance.'],
+    ['10 CFR 73','NRC physical security regulations for nuclear power plants. Background investigation requirements, armed guard forces, access control systems. SMR deployments will require NRC site security plan approval.'],
+    ['10 CFR 73.54','NRC cyber security regulations. Protects digital computer and communications systems associated with safety, security, and emergency preparedness functions. Applies to SMRs.'],
+    ['DHS SAFETY Act','Support Anti-Terrorism by Fostering Effective Technologies Act. Provides liability protection for sellers of anti-terrorism technologies designated by DHS. Relevant for cUAS system vendors seeking to reduce liability exposure for use in critical infrastructure protection.']
+  ]},
+  {section:'Security cooperation governing law',items:[
+    ['10 USC 333','Building Partner Capacity. Training and equipping partner nation forces for counter-terrorism, WMD, narcotics, and other shared threats. SecDef-DoS coordination. Congressional notification.'],
+    ['10 USC 127e','SOF support to foreign irregular forces combating terrorism. SecDef approval. High classification. Limited disclosure authority.'],
+    ['10 USC 1202','Support to irregular forces for IW objectives. Congressional notification above thresholds. Distinct from 127e.'],
+    ['10 USC 2282','Counter-narcotics activities. DoS concurrence required. Leahy vetting. Core SOUTHCOM authority.'],
+    ['10 USC 2561','Humanitarian assistance. Not for security force development. Transportation of relief supplies, excess property, medical training.'],
+    ['22 USC 2347 (IMET)','International Military Education and Training. Partner nation personnel at U.S. military schools. DoS-DoD administered.'],
+    ['22 USC 2763 (FMF)','Foreign Military Financing. Grant or loan financing for partner nation defense purchases. FMS cases. EUM required.'],
+    ['22 USC 2761 (FMS)','Foreign Military Sales authority. Government-to-government sales of U.S. defense articles and services. SAMM governs procedures.']
+  ]}
+];
+
+
+// ════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════
+function nav(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ════════════════════════════════════════
+// MATCHMAKER
+// ════════════════════════════════════════
+let curDomain = 'all';
+const SH_CTX = {
+  gov: 'Fastest acquisition pathways from a government contracting officer perspective. Speed ratings reflect realistic time-to-field.',
+  industry: 'Industry/contractor perspective: which vehicles are accessible, competition structure, and how to position.',
+  congress: 'Congressional oversight and OSD perspective: capability registries, program performance, and what appropriations are buying.'
+};
+const DOM_COLORS = {
+  cuAs:'#C0180C', logistics:'#1A6B38', maritime:'#0057FF',
+  cbrne:'#B05A00', intel:'#5C4FBF', infra:'#0057FF'
+};
+
+function setSH(sh, btn) {
+  document.querySelectorAll('.sh-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sh-context').textContent = SH_CTX[sh];
+  closeMatch();
+}
+
+function filterDom(d, btn) {
+  curDomain = d;
+  document.querySelectorAll('.df-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderReqs();
+  closeMatch();
+}
+
+function renderReqs() {
+  const filtered = REQUIREMENTS.filter(r => curDomain === 'all' || r.domain === curDomain);
+  document.getElementById('req-grid').innerHTML = filtered.map(r => {
+    const urgCls = r.urgency === 'critical' ? 'urg-critical' : r.urgency === 'high' ? 'urg-high' : 'urg-routine';
+    const col = DOM_COLORS[r.domain] || 'rgba(0,0,0,0.4)';
+    return `<div class="req-card" id="rc-${r.id}" onclick="openReq('${r.id}')">
+      <div class="req-urgency ${urgCls}">${r.urgency}</div>
+      <div class="req-domain" style="color:${col}">${r.domain.toUpperCase()}</div>
+      <div class="req-title">${r.title}</div>
+      <div class="req-body">${r.body}</div>
+      <div>${r.constraints.slice(0,2).map(c=>`<span class="tag tag-red">${c}</span>`).join('')}${r.constraints.length>2?`<span class="tag tag-dim">+${r.constraints.length-2}</span>`:''}</div>
+      <div class="req-cta">→ View matched solutions</div>
+    </div>`;
+  }).join('');
+}
+
+function openReq(id) {
+  document.querySelectorAll('.req-card').forEach(c => c.classList.remove('sel'));
+  const card = document.getElementById('rc-' + id);
+  if (card) card.classList.add('sel');
+
+  const req = REQUIREMENTS.find(r => r.id === id);
+  document.getElementById('mp-title').textContent = req.title;
+  document.getElementById('mp-sub').textContent = `${req.solutions.length} matched solutions · ranked by acquisition speed · all regulatory constraints applied`;
+
+  document.getElementById('mp-results').innerHTML = req.solutions.map(sid => {
+    const sol = SOLUTIONS[sid];
+    const i = req.solutions.indexOf(sid);
+    const spdCls = sol.speed === 'FAST' ? 'spd-fast' : sol.speed === 'MED' ? 'spd-med' : 'spd-slow';
+    const bCls   = i === 0 ? 'sol-b1' : i === 1 ? 'sol-b2' : 'sol-b3';
+    const tdCls  = sol.speed === 'FAST' ? 'td-f' : sol.speed === 'MED' ? 'td-m' : 'td-s';
+    const steps  = sol.pathway.steps || [];
+    return `<div class="sol">
+      <div class="sol-top">
+        <div class="sol-badge ${bCls}">${i+1}</div>
+        <div style="flex:1">
+          <div class="sol-name">${sol.title}</div>
+          <div class="sol-type">${sol.type}</div>
+        </div>
+        <span class="spd ${spdCls}">${sol.speed} · ${sol.pathway.totalTime}</span>
+      </div>
+      <div class="sol-body">${sol.body}</div>
+      <div class="sol-path-eyebrow">Fastest compliant acquisition pathway</div>
+      <div class="sol-path-box">
+        <div class="sol-path-row"><div class="sol-path-k">Vehicle</div><div class="sol-path-v">${sol.pathway.vehicle}</div></div>
+        <div class="sol-path-row"><div class="sol-path-k">Authority</div><div class="sol-path-v">${sol.pathway.authority}</div></div>
+        <div class="sol-path-row"><div class="sol-path-k">Timeline</div><div class="sol-path-v"><strong>${sol.pathway.totalTime}</strong></div></div>
+        <div class="sol-path-row"><div class="sol-path-k">Ceiling</div><div class="sol-path-v">${sol.pathway.ceiling}</div></div>
+        <div class="sol-path-row"><div class="sol-path-k">Competition</div><div class="sol-path-v">${sol.pathway.competition}</div></div>
+      </div>
+      ${steps.length ? `<div class="sol-timeline">${steps.map((s,si)=>`<div class="tl-step"><div class="tl-dot ${tdCls}">${si+1}</div><div class="tl-lbl">${s.replace(/\s*\(.*?\)/,'').substring(0,18)}</div></div>`).join('')}</div>` : ''}
+      <div class="sol-regs">
+        <div class="sol-reg-eyebrow">Regulatory constraints</div>
+        <div>${sol.regulations.map(r=>`<span class="tag tag-red">${r}</span>`).join('')}</div>
+      </div>
+      ${sol.constraints ? `<div class="sol-constraint"><strong>Key constraint:</strong> ${sol.constraints}</div>` : ''}
+      ${sol.tradeoff    ? `<div class="sol-tradeoff"><strong>Tradeoff:</strong> ${sol.tradeoff}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  document.getElementById('mp-cbar').innerHTML = `<div class="mp-cb-label">All constraints for this requirement</div><div>${req.constraints.map(c=>`<span class="tag tag-red">${c}</span>`).join('')}</div>`;
+  document.getElementById('match-panel').classList.add('vis');
+  document.getElementById('match-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeMatch() {
+  document.querySelectorAll('.req-card').forEach(c => c.classList.remove('sel'));
+  document.getElementById('match-panel').classList.remove('vis');
+}
+
+// ════════════════════════════════════════
+// PIPELINES
+// ════════════════════════════════════════
+function renderPipelines() {
+  const el = document.getElementById('pipelines-list');
+  if (!el) return;
+  el.innerHTML = PIPELINES.map(p => {
+    const spdCls = p.speed === 'FAST' ? 'spd-fast' : p.speed === 'MED' ? 'spd-med' : 'spd-slow';
+    const did = 'pd-' + p.id;
+    return `<div>
+      <div class="pipe-row" id="pr-${p.id}" onclick="togglePipe('${did}','pr-${p.id}')">
+        <div><div class="pipe-name">${p.name}</div><div class="pipe-auth">${p.auth}</div></div>
+        <div><span class="spd ${spdCls}">${p.speed}</span></div>
+        <div style="font-size:11px;color:var(--ink50)">${p.time}</div>
+        <div style="font-size:11px;color:var(--ink50)">${p.ceiling}</div>
+        <div style="font-size:11px;color:var(--ink50)">${p.competition}</div>
+      </div>
+      <div class="pipe-detail" id="${did}">
+        <div class="g2">
+          <div style="font-size:11px;color:var(--ink50);line-height:1.7">${p.body}
+            <div style="margin-top:12px">${p.regs.map(r=>`<span class="tag tag-gold">${r}</span>`).join('')}</div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink50);margin-bottom:8px">Speed bar</div>
+            <div style="height:4px;background:var(--rule);margin-bottom:6px;border-radius:1px;overflow:hidden">
+              <div style="height:100%;width:${p.speed==='FAST'?'88%':p.speed==='MED'?'52%':'14%'};background:${p.speed==='FAST'?'var(--grn)':p.speed==='MED'?'var(--amb)':'var(--red)'}"></div>
+            </div>
+            <div style="font-size:12px;color:var(--ink35)">${p.time}</div>
+          </div>
+        </div>
+        <div class="pipe-tip"><strong>Maximum velocity technique:</strong> ${p.speed_tips}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function togglePipe(did, rowId) {
+  const detail = document.getElementById(did);
+  const row    = document.getElementById(rowId);
+  const wasOpen = detail.classList.contains('open');
+  document.querySelectorAll('.pipe-detail').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.pipe-row').forEach(r => r.classList.remove('open'));
+  if (!wasOpen) { detail.classList.add('open'); row.classList.add('open'); }
+}
+
+// ════════════════════════════════════════
+// SECCOOP
+// ════════════════════════════════════════
+function renderSeccoop() {
+  const el = document.getElementById('seccoop-list');
+  if (!el) return;
+  el.innerHTML = SECCOOP_AUTHORITIES.map(a => {
+    const spdCls = a.speed === 'FAST' ? 'spd-fast' : a.speed === 'MED' ? 'spd-med' : 'spd-slow';
+    const did = 'sc-' + a.id;
+    return `<div class="accord" id="${did}">
+      <div class="accord-hdr" onclick="toggleAccord('${did}')">
+        <div>
+          <div class="accord-title">${a.name}</div>
+          <div class="accord-sub">${a.auth} · ${a.time}</div>
+        </div>
+        <div class="accord-meta"><span class="spd ${spdCls}">${a.speed}</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="accord-body">
+        <div class="g2">
+          <div>
+            <div style="font-size:11px;color:var(--ink50);line-height:1.7;margin-bottom:12px">${a.body}</div>
+            <div style="padding:12px 15px;background:var(--red-s);border-left:3px solid var(--red);font-size:14px;color:var(--ink70);line-height:1.6"><strong style="color:var(--red)">Constraint:</strong> ${a.constraint}</div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink50);margin-bottom:8px">Governing regulations</div>
+            ${a.regs.map(r=>`<div class="reg-row"><span class="reg-cite">${r}</span><span class="reg-desc">See regulatory index</span></div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+// SECTORS
+// ════════════════════════════════════════
+function renderSectors() {
+  const el = document.getElementById('sector-grid');
+  if (!el) return;
+  const rMap = { critical: 'risk-c', high: 'risk-h', med: 'risk-m' };
+  const rTxt = { critical: 'Critical risk', high: 'High risk', med: 'Medium risk' };
+  el.innerHTML = CISA_SECTORS.map(s => `
+    <div class="sector-card" id="sc-${s.id}" onclick="openSector('${s.id}',this)">
+      <div class="sector-icon">${s.icon}</div>
+      <div class="sector-name">${s.name}</div>
+      <div class="sector-risk ${rMap[s.risk]}">${rTxt[s.risk]}</div>
+    </div>`).join('');
+}
+
+let activeSec = null;
+function openSector(id, card) {
+  const s = CISA_SECTORS.find(x => x.id === id);
+  const det = document.getElementById('sector-detail');
+  document.querySelectorAll('.sector-card').forEach(c => c.classList.remove('sel'));
+  if (activeSec === id) { det.classList.remove('open'); activeSec = null; return; }
+  activeSec = id;
+  card.classList.add('sel');
+  const rMap = { critical: 'risk-c', high: 'risk-h', med: 'risk-m' };
+  const rTxt = { critical: 'Critical SOUTHCOM risk', high: 'High SOUTHCOM risk', med: 'Medium SOUTHCOM risk' };
+  det.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px">${s.icon} ${s.name}</div>
+        <div class="sector-risk ${rMap[s.risk]}">${rTxt[s.risk]}</div>
+      </div>
+      <button onclick="openSector('${s.id}',document.querySelector('.sector-card.sel'))" style="background:var(--ink06);border:1px solid var(--rule);color:var(--ink50);padding:6px 12px;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase">✕ Close</button>
+    </div>
+    <div class="g2">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--blue);margin-bottom:8px">SOUTHCOM context</div>
+        <div style="font-size:11px;color:var(--ink50);line-height:1.7;margin-bottom:12px">${s.body}</div>
+        <div style="font-size:12px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--red);margin-bottom:8px">UAV threat vectors</div>
+        <div style="font-size:11px;color:var(--ink50);padding:9px 12px;background:rgba(192,57,43,0.1);border-left:2px solid var(--red);line-height:1.6">${s.threat}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--blue);margin-bottom:8px">Acquisition pathways</div>
+        <div style="font-size:14px;color:var(--ink70);margin-bottom:14px">${s.acq}</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--blue);margin-bottom:8px">Governing regulations</div>
+        <div style="font-size:14px;color:var(--ink70)">${s.reg}</div>
+      </div>
+    </div>`;
+  det.classList.add('open');
+  det.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ════════════════════════════════════════
+// REGS
+// ════════════════════════════════════════
+function renderRegs() {
+  const el = document.getElementById('regs-list');
+  if (!el) return;
+  el.innerHTML = REGS_INDEX.map(sec => {
+    const did = 'ri-' + sec.section.replace(/\W+/g,'-');
+    return `<div class="accord" id="${did}">
+      <div class="accord-hdr" onclick="toggleAccord('${did}')">
+        <div class="accord-title">${sec.section}</div>
+        <div class="accord-meta"><span class="tag tag-dim">${sec.items.length} entries</span><span class="chevron">▾</span></div>
+      </div>
+      <div class="accord-body">
+        ${sec.items.map(([cite,desc])=>`<div class="reg-row"><span class="reg-cite">${cite}</span><span class="reg-desc">${desc}</span></div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleAccord(id) { document.getElementById(id).classList.toggle('open'); }
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  renderReqs();
+  renderPipelines();
+  renderSeccoop();
+  renderSectors();
+  renderRegs();
+});
+</script>
+</body>
+</html>
